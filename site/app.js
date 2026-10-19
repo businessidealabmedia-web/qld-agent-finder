@@ -6,7 +6,7 @@ var money=function(v){return '$'+Math.round(v).toLocaleString('en-AU')};
 var params=new URLSearchParams(location.search);
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var CFG=window.QAF_CONFIG||{};var LIVE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
-function api(path,opt){opt=opt||{};opt.headers=Object.assign({apikey:CFG.supabaseAnonKey,Authorization:'Bearer '+CFG.supabaseAnonKey,'Content-Type':'application/json'},opt.headers||{});return fetch(CFG.supabaseUrl.replace(/\/$/,'')+'/rest/v1/'+path,opt)}
+function api(path,opt){opt=opt||{};var h={apikey:CFG.supabaseAnonKey,'Content-Type':'application/json'};if(/^eyJ/.test(CFG.supabaseAnonKey))h.Authorization='Bearer '+CFG.supabaseAnonKey;opt.headers=Object.assign(h,opt.headers||{});return fetch(CFG.supabaseUrl.replace(/\/$/,'')+'/rest/v1/'+path,opt)}
 
 /* ---------- forms: save to the database ---------- */
 var FORM_TABLE={'list-my-home':'leads','agent-enquiry':'leads','agent-signup':'agents','contact':'contacts'};
