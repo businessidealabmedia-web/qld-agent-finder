@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Agent Portal | QLD Agent Finder</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+
+<section class="login" id="loginView" hidden>
+  <form class="box" id="loginForm">
+    <div class="brand"><img src="favicon.svg" width="34" height="34" alt=""><span><b>QLD</b> Agent Finder · Agents</span></div>
+    <h2>Agent login</h2>
+    <p style="color:#5E5862;margin-top:0">Enter the email you applied with. We'll send you a secure login link. No password needed.</p>
+    <label for="lEmail">Email</label><input id="lEmail" type="email" autocomplete="email" required>
+    <div class="row" style="justify-content:stretch"><button class="btn" style="flex:1" type="submit">Email me a login link</button></div>
+    <p class="msg" id="loginMsg" role="alert"></p>
+    <p style="font-size:14px;margin-bottom:0">Not listed yet? <a id="applyLink" href="#">Apply to join</a></p>
+  </form>
+</section>
+
+<section class="login" id="setupView" hidden>
+  <div class="box"><h2>Almost there</h2><p>Add the Supabase URL and anon key to <b>config.js</b> in the agents folder, then re-upload.</p></div>
+</section>
+
+<div id="appView" hidden>
+  <header class="top">
+    <div class="brand"><img src="favicon.svg" width="30" height="30" alt=""><span><b>QLD</b> Agent Portal</span></div>
+    <nav class="tabs" id="tabs" aria-label="Sections">
+      <button data-tab="leads" class="on">My leads<span class="pill" id="pLeads" hidden></span></button>
+      <button data-tab="profile">My profile</button>
+    </nav>
+    <div style="display:flex;gap:8px;align-items:center"><a id="viewPublic" class="btn sm gold" target="_blank" rel="noopener" hidden>View public profile</a><button class="btn sm ghost" style="color:#f5efe6;border-color:#f5efe6" id="logout">Log out</button></div>
+  </header>
+  <main id="main"></main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="agent.js"></script>
+</body>
+</html>

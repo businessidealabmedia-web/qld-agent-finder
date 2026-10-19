@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Profile | QLD Agent Finder</title>
+<meta name="description" content="Real estate agent profile on QLD Agent Finder.">
+<link rel="canonical" href="https://qldagentfinder.com.au/agent.html">
+<meta property="og:title" content="Agent Profile | QLD Agent Finder">
+<meta property="og:description" content="Real estate agent profile on QLD Agent Finder.">
+<meta property="og:image" content="https://qldagentfinder.com.au/og-image.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>Free for Queensland home sellers · No obligation</span><a href="contact.html">Contact us</a></div></div>
+<header>
+<div class="wrap nav">
+<a class="logo" href="index.html" aria-label="QLD Agent Finder home"><svg width="34" height="38" viewBox="0 0 96 104" aria-hidden="true"><path d="M48 0C21.5 0 0 21 0 47c0 33 48 57 48 57s48-24 48-57C96 21 74.5 0 48 0z" fill="#7A1F33"/><path d="M24 50 48 30 72 50" fill="none" stroke="#E8A33D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><rect x="34" y="50" width="28" height="22" rx="3" fill="#FBF6EF"/></svg><span><b>QLD</b> Agent Finder</span></a>
+<button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+<ul id="menu">
+<li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
+<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li></ul></li>
+<li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
+<li><a href="areas.html">Areas</a></li>
+<li><a href="services.html">Services</a></li>
+<li><a href="guides.html">Guides</a></li>
+<li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
+</ul>
+<div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Free appraisal</a></div>
+</div>
+</header>
+<main>
+
+<section class="page-hero"><div class="wrap" id="profile">
+<div class="breadcrumb"><a href="index.html">Home</a> › <a href="find-agents.html">Find agents</a> › Profile</div>
+<div class="agent-top"><div class="avatar" id="pInit" style="width:96px;height:96px;font-size:34px;background:#FBF6EF;color:#7A1F33"></div><div><h1 id="pName" style="margin:0"></h1><div id="pAgency" style="font-size:18px;opacity:.9"></div></div></div>
+<div class="badges" id="pBadges" style="margin-top:16px"></div>
+</div></section>
+<section><div class="wrap profile">
+<div>
+<div class="notice" id="pDemo" hidden>This is a demo profile to show how agent pages work. Real partner agents will appear here.</div>
+<div class="kpis" id="pKpis" style="grid-template-columns:repeat(3,minmax(0,1fr));padding:20px;gap:16px;background:#fff;border:1px solid #E6DDD0"></div>
+<h2 style="margin-top:40px;font-size:30px">About</h2><p id="pAbout"></p>
+<h2 style="font-size:30px">Suburbs covered</h2><div class="chips" id="pSuburbs" style="justify-content:flex-start"></div>
+<h2 style="margin-top:40px;font-size:30px">How this agent is scored</h2><p>Scores combine reviews (40%), sales volume (30%), speed of sale (20%) and experience (10%). <a href="rankings.html#method">Full method</a>.</p>
+</div>
+<div class="card" style="position:sticky;top:96px">
+<h3>Request a free appraisal</h3>
+<form name="agent-enquiry" method="POST" action="thank-you.html" data-netlify="true" netlify-honeypot="hp">
+<input type="hidden" name="form-name" value="agent-enquiry"><p hidden><label>Leave empty <input name="hp"></label></p>
+<input type="hidden" name="agent" id="pAgentField">
+<div class="field"><label for="eN">Your name</label><input id="eN" name="name" required autocomplete="name"></div>
+<div class="field"><label for="eP">Mobile</label><input id="eP" name="phone" type="tel" required autocomplete="tel"></div>
+<div class="field"><label for="eE">Email</label><input id="eE" name="email" type="email" required autocomplete="email"></div>
+<div class="field"><label for="eA">Property address or suburb</label><input id="eA" name="address" required autocomplete="street-address"></div>
+<button class="btn btn-gold" type="submit" style="width:100%">Send request</button>
+<p class="small">Free and no obligation. <a href="privacy.html">Privacy</a></p>
+</form>
+</div>
+</div></section></main>
+<footer>
+<div class="wrap">
+<div class="foot">
+<div><a class="logo" href="index.html" style="color:#F5EFE6"><span><b style="color:#E8A33D">QLD</b> Agent Finder</span></a><p>Find the right agent. Locally.<br>Helping Queensland homeowners compare trusted local real estate agents.</p></div>
+<div><h4>Sellers</h4><ul><li><a href="sell.html">List your home</a></li><li><a href="find-agents.html">Find agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="tools.html">Calculators</a></li><li><a href="guides.html">Guides</a></li></ul></div>
+<div><h4>Agents</h4><ul><li><a href="join.html">List yourself</a></li><li><a href="for-agents.html">Why join</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a href="faq.html#agents">Agent FAQ</a></li><li><a data-portal href="#">Agent login</a></li></ul></div>
+<div><h4>Company</h4><ul><li><a href="services.html">Services</a></li><li><a href="areas.html">Areas</a></li><li><a href="about.html">About us</a></li><li><a href="about.html#money">How we make money</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="https://www.facebook.com/qldagentfinder.au/" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/qldagentfinder/" rel="noopener">Instagram</a></li></ul></div>
+</div>
+<div class="legal">© <span data-year>2026</span> QLD Agent Finder · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Use</a><br>Photos via <a href="https://unsplash.com">Unsplash</a>. QLD Agent Finder is an agent referral and comparison service, not a licensed real estate agency. Agent order and rankings are not an endorsement; see how rankings work on our <a href="rankings.html#method">rankings page</a>.</div>
+</div>
+</footer>
+<a class="btn btn-gold sticky-cta" href="sell.html">Get my free appraisal</a>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

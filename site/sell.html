@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>List Your Home & Get a Free Appraisal | QLD Agent Finder</title>
+<meta name="description" content="List your Queensland property and get matched with top local agents for a free, no-obligation appraisal.">
+<link rel="canonical" href="https://qldagentfinder.com.au/sell.html">
+<meta property="og:title" content="List Your Home & Get a Free Appraisal | QLD Agent Finder">
+<meta property="og:description" content="List your Queensland property and get matched with top local agents for a free, no-obligation appraisal.">
+<meta property="og:image" content="https://qldagentfinder.com.au/og-image.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>Free for Queensland home sellers · No obligation</span><a href="contact.html">Contact us</a></div></div>
+<header>
+<div class="wrap nav">
+<a class="logo" href="index.html" aria-label="QLD Agent Finder home"><svg width="34" height="38" viewBox="0 0 96 104" aria-hidden="true"><path d="M48 0C21.5 0 0 21 0 47c0 33 48 57 48 57s48-24 48-57C96 21 74.5 0 48 0z" fill="#7A1F33"/><path d="M24 50 48 30 72 50" fill="none" stroke="#E8A33D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><rect x="34" y="50" width="28" height="22" rx="3" fill="#FBF6EF"/></svg><span><b>QLD</b> Agent Finder</span></a>
+<button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+<ul id="menu">
+<li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
+<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li></ul></li>
+<li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
+<li><a href="areas.html">Areas</a></li>
+<li><a href="services.html">Services</a></li>
+<li><a href="guides.html">Guides</a></li>
+<li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
+</ul>
+<div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Free appraisal</a></div>
+</div>
+</header>
+<main>
+<section class="page-hero"><div class="wrap"><div class="breadcrumb"><a href="index.html">Home</a> › List your home</div><div class="eyebrow">For sellers</div><h1>List your home. Get matched free.</h1><p style="font-size:20px;max-width:680px;opacity:.92;margin:0">Tell us about your property and we will connect you with the best local agents. Takes about 1 minute.</p></div></section>
+<section><div class="wrap calc" style="align-items:start">
+<div class="card">
+<div class="steps-bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<form name="list-my-home" method="POST" action="thank-you.html" data-netlify="true" netlify-honeypot="hp" data-steps novalidate>
+<input type="hidden" name="form-name" value="list-my-home"><p hidden><label>Leave empty <input name="hp"></label></p>
+<input type="hidden" name="agent">
+<div class="step"><h3>What would you like to do?</h3>
+<div class="choices">
+<label><input type="radio" name="goal" value="Sell my home" required><span>Sell my home</span></label>
+<label><input type="radio" name="goal" value="Know my home's value"><span>Know my home's value</span></label>
+<label><input type="radio" name="goal" value="Sell and buy"><span>Sell &amp; buy</span></label>
+<label><input type="radio" name="goal" value="Lease / property management"><span>Lease / manage</span></label>
+</div><div class="err" role="alert"></div>
+<div class="form-nav"><button type="button" class="btn btn-maroon" data-next>Continue</button></div></div>
+
+<div class="step"><h3>Where is the property?</h3>
+<div class="field"><label for="sAddr">Street address (optional)</label><input id="sAddr" name="address" autocomplete="street-address"></div>
+<div class="field"><label for="sSub">Suburb</label><input id="sSub" name="suburb" required autocomplete="address-level2"></div>
+<div class="field"><label for="sPc">Postcode</label><input id="sPc" name="postcode" inputmode="numeric" maxlength="4" required></div>
+<div class="err" role="alert"></div>
+<div class="form-nav"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-maroon" data-next>Continue</button></div></div>
+
+<div class="step"><h3>About the property</h3>
+<div class="field"><label for="sType">Property type</label><select id="sType" name="property_type" required><option value="">Select…</option><option>House</option><option>Townhouse</option><option>Unit / Apartment</option><option>Land</option><option>Acreage</option><option>Other</option></select></div>
+<div class="choices" style="grid-template-columns:1fr 1fr 1fr">
+<div class="field" style="margin:0"><label for="sBed">Beds</label><select id="sBed" name="bedrooms"><option></option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
+<div class="field" style="margin:0"><label for="sBath">Baths</label><select id="sBath" name="bathrooms"><option></option><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+<div class="field" style="margin:0"><label for="sCar">Cars</label><select id="sCar" name="car_spaces"><option></option><option>0</option><option>1</option><option>2</option><option>3+</option></select></div>
+</div>
+<div class="field"><label for="sWhen">When do you want to sell?</label><select id="sWhen" name="timeframe" required><option value="">Select…</option><option>ASAP</option><option>1–3 months</option><option>3–6 months</option><option>6–12 months</option><option>Just researching</option></select></div>
+<div class="field"><label for="sPrice">Price expectation (optional)</label><select id="sPrice" name="price_expectation"><option></option><option>Under $500k</option><option>$500k – $750k</option><option>$750k – $1m</option><option>$1m – $1.5m</option><option>$1.5m – $2m</option><option>$2m+</option><option>Not sure</option></select></div>
+<div class="err" role="alert"></div>
+<div class="form-nav"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-maroon" data-next>Continue</button></div></div>
+
+<div class="step"><h3>Where should we send your matches?</h3>
+<div class="field"><label for="sN">Full name</label><input id="sN" name="name" required autocomplete="name"></div>
+<div class="field"><label for="sM">Mobile</label><input id="sM" name="phone" type="tel" placeholder="04xx xxx xxx" required autocomplete="tel"></div>
+<div class="field"><label for="sE">Email</label><input id="sE" name="email" type="email" required autocomplete="email"></div>
+<div class="field"><label for="sNote">Anything agents should know? (optional)</label><textarea id="sNote" name="notes" rows="3"></textarea></div>
+<label class="chk" style="margin-bottom:12px"><input type="checkbox" name="consent" value="yes" required> I agree to be contacted by QLD Agent Finder and matched agents. <a href="privacy.html">Privacy</a></label>
+<div class="err" role="alert"></div>
+<div class="form-nav"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="submit" class="btn btn-gold">Get my free matches</button></div></div>
+</form>
+</div>
+<div>
+<img src="https://images.unsplash.com/photo-1635315891380-f70330a5b41b?w=800&q=60&auto=format&fit=crop" alt="Bright, styled bedroom ready for sale" loading="lazy" width="800" height="500" style="width:100%;border-radius:20px;aspect-ratio:16/10;object-fit:cover;margin-bottom:24px">
+<h2>What happens next?</h2>
+<div class="tile" style="margin-bottom:14px"><div class="num">1</div><h3>We review your property</h3><p>Our team looks at your suburb, property type and timing.</p></div>
+<div class="tile" style="margin-bottom:14px"><div class="num">2</div><h3>We match top local agents</h3><p>Usually within 1 business day, by phone or email.</p></div>
+<div class="tile"><div class="num gold">3</div><h3>You choose</h3><p>Meet the agents, compare appraisals and fees. No obligation.</p></div>
+<div class="trust" style="color:#1C1A1F"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Free</span><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>No obligation</span><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2.4" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>No spam</span></div>
+</div>
+</div></section></main>
+<footer>
+<div class="wrap">
+<div class="foot">
+<div><a class="logo" href="index.html" style="color:#F5EFE6"><span><b style="color:#E8A33D">QLD</b> Agent Finder</span></a><p>Find the right agent. Locally.<br>Helping Queensland homeowners compare trusted local real estate agents.</p></div>
+<div><h4>Sellers</h4><ul><li><a href="sell.html">List your home</a></li><li><a href="find-agents.html">Find agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="tools.html">Calculators</a></li><li><a href="guides.html">Guides</a></li></ul></div>
+<div><h4>Agents</h4><ul><li><a href="join.html">List yourself</a></li><li><a href="for-agents.html">Why join</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a href="faq.html#agents">Agent FAQ</a></li><li><a data-portal href="#">Agent login</a></li></ul></div>
+<div><h4>Company</h4><ul><li><a href="services.html">Services</a></li><li><a href="areas.html">Areas</a></li><li><a href="about.html">About us</a></li><li><a href="about.html#money">How we make money</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="https://www.facebook.com/qldagentfinder.au/" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/qldagentfinder/" rel="noopener">Instagram</a></li></ul></div>
+</div>
+<div class="legal">© <span data-year>2026</span> QLD Agent Finder · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Use</a><br>Photos via <a href="https://unsplash.com">Unsplash</a>. QLD Agent Finder is an agent referral and comparison service, not a licensed real estate agency. Agent order and rankings are not an endorsement; see how rankings work on our <a href="rankings.html#method">rankings page</a>.</div>
+</div>
+</footer>
+<a class="btn btn-gold sticky-cta" href="sell.html">Get my free appraisal</a>
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
