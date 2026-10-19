@@ -189,3 +189,28 @@ footer ul{list-style:none;padding:0;margin:0}footer li{margin-bottom:8px}
 .admin-step{counter-increment:s}
 pre.out{background:var(--ink);color:#f5efe6;padding:16px;border-radius:12px;overflow:auto;font-size:13px;white-space:pre-wrap}
 .split img,.area,.svc img{background:#E6DDD0}
+/* v4 mobile + polish */
+.split>*,.grid3>*,.grid4>*,.calc>*,.profile>*,.hero-grid>*,.paths>*,.foot>*{min-width:0}
+img{height:auto}
+.hide-sm{display:inline}
+footer li a{display:inline-block;padding:9px 0}
+.breadcrumb a{display:inline-block;padding:6px 0}
+@media(max-width:700px){
+ body{padding-bottom:84px}
+ body.no-sticky{padding-bottom:0}
+ .hide-sm{display:none}
+ .topbar .wrap{height:auto;padding-top:8px;padding-bottom:8px}
+ section{padding:56px 0}
+ .page-hero{padding:48px 0}
+ h1{font-size:36px}
+ .card{padding:22px}
+ .cta-band{padding:36px 22px}
+ .paths{margin-top:-36px}
+ .foot{grid-template-columns:1fr 1fr;gap:24px}
+ .kpis b{font-size:18px}
+ .rank-row{grid-template-columns:44px 1fr auto;padding:14px}
+ .score{font-size:22px}
+ .search .btn{width:100%}
+ .filters{padding:14px}
+}
+body.no-sticky .sticky-cta{display:none!important}

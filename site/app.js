@@ -116,16 +116,20 @@ function renderAgents(AG){
       rk.innerHTML=list.length?list.map(function(a,i){return '<a class="rank-row" href="agent.html?id='+encodeURIComponent(a.id)+'"><div class="rank-no">#'+(i+1)+'</div><div><b>'+esc(a.name)+'</b>'+(a.demo?' <span class="badge demo">Demo</span>':'')+'<div class="small">'+esc(a.agency)+' · '+esc(a.region)+' · '+(a.rating?a.rating.toFixed(1)+'★':'New')+' · '+a.sold12m+' sold · '+a.avgDays+' avg days</div></div><div class="score">'+qafScore(a)+'<small>/100</small></div></a>'}).join(''):'<p>No ranked agents in this area yet.</p>'};
     tabs.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;cur=b.dataset.r;$$('button',tabs).forEach(function(x){x.classList.toggle('on',x===b)});drawR()});drawR()}
 
-  var at=$('#areaTiles');if(at){at.innerHTML=QAF_REGIONS.map(function(r){var n=AG.filter(function(a){return a.region===r}).length;return '<a class="area" href="find-agents.html?region='+encodeURIComponent(r)+'"><img src="'+QAF_IMG(QAF_REGION_IMG[r],600)+'" alt="'+r+', Queensland" loading="lazy" width="600" height="450"><span>'+r+'<small>'+(n?n+' agent'+(n===1?'':'s')+' · ':'')+'View agents →</small></span></a>'}).join('')}
+  var at=$('#areaTiles');if(at){at.innerHTML=QAF_REGIONS.map(function(r){var n=AG.filter(function(a){return a.region===r}).length;return '<a class="area" href="real-estate-agents-'+r.toLowerCase().replace(/ /g,'-')+'.html"><img src="'+QAF_IMG(QAF_REGION_IMG[r],600)+'" alt="'+r+', Queensland" loading="lazy" width="600" height="450"><span>'+r+'<small>'+(n?n+' agent'+(n===1?'':'s')+' · ':'')+'View agents →</small></span></a>'}).join('')}
 }
 loadAgents().then(renderAgents);
 
 /* ---------- static bits ---------- */
 var hs=$('#homeSearch');if(hs){var hr=$('#hsRegion');hr.innerHTML='<option value="">All QLD</option>'+QAF_REGIONS.map(function(x){return '<option>'+x+'</option>'}).join('')}
-var fh=$('#findHero');if(fh&&params.get('region')&&QAF_REGION_IMG[params.get('region')]){fh.classList.add('photo');fh.style.backgroundImage='linear-gradient(rgba(79,18,32,.88),rgba(122,31,51,.8)),url('+QAF_IMG(QAF_REGION_IMG[params.get('region')],1400)+')';$('#findTitle').textContent='Top real estate agents in '+params.get('region')}
+var fh=$('#findHero');if(fh&&params.get('region')&&QAF_REGION_IMG[params.get('region')]){fh.classList.add('photo');fh.style.backgroundImage='linear-gradient(rgba(79,18,32,.88),rgba(122,31,51,.8)),url('+QAF_IMG(QAF_REGION_IMG[params.get('region')],1400)+')';var ft=$('#findTitle');if(ft)ft.textContent='Top real estate agents in '+params.get('region')}
 (function(){var p=$('#price'),r=$('#rate');
   if(p&&r){var f=function(){$('#priceOut').textContent=money(+p.value);$('#rateOut').textContent=(+r.value).toFixed(1)+'%';$('#feeOut').textContent=money(p.value*r.value/100*1.1);$('#diffOut').textContent=money(p.value*0.005*1.1)};[p,r].forEach(function(e){e.addEventListener('input',f)});f()}
   var sp=$('#scPrice');
   if(sp){var g=function(){var v=+sp.value||0,rate=+$('#scRate').value||0,mk=+$('#scMarketing').value||0,le=+$('#scLegal').value||0,ot=+$('#scOther').value||0;var com=v*rate/100*1.1,tot=com+mk+le+ot;
     $('#scCom').textContent=money(com);$('#scTotal').textContent=money(tot);$('#scNet').textContent=money(v-tot)};$$('#sellCalc input').forEach(function(e){e.addEventListener('input',g)});g()}})();
+if(document.querySelector('form[data-steps],form[name=contact],#profile'))document.body.classList.add('no-sticky');
+/* region landing pages: preset region + photo */
+var fr=document.getElementById('fRegion');if(fr&&fr.dataset.default&&!params.get('region'))params.set('region',fr.dataset.default);
+var rh=document.querySelector('[data-region-img]');if(rh&&QAF_REGION_IMG[rh.dataset.regionImg])rh.style.backgroundImage='linear-gradient(rgba(79,18,32,.9),rgba(122,31,51,.82)),url('+QAF_IMG(QAF_REGION_IMG[rh.dataset.regionImg],1400)+')';
 $$('[data-portal]').forEach(function(a){a.href=CFG.agentPortalUrl||'#'});

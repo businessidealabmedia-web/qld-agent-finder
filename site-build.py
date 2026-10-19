@@ -22,7 +22,7 @@ def head(title,desc,path):
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="topbar"><div class="wrap"><span>Free for Queensland home sellers · No obligation</span><a href="contact.html">Contact us</a></div></div>
+<div class="topbar"><div class="wrap"><span>Free for Queensland home sellers<span class="hide-sm"> · No obligation</span></span><a href="contact.html">Contact us</a></div></div>
 <header>
 <div class="wrap nav">
 <a class="logo" href="index.html" aria-label="QLD Agent Finder home">{PIN}<span><b>QLD</b> Agent Finder</span></a>
@@ -42,12 +42,14 @@ def head(title,desc,path):
 <main>
 '''
 
+AREA_LINKS=''.join(f'<li><a href="real-estate-agents-{x}.html">{n}</a></li>' for n,x in [('Brisbane','brisbane'),('Gold Coast','gold-coast'),('Sunshine Coast','sunshine-coast'),('Logan','logan'),('Ipswich','ipswich'),('Moreton Bay','moreton-bay'),('Redlands','redlands'),('Toowoomba','toowoomba')])
 FOOT='''</main>
 <footer>
 <div class="wrap">
 <div class="foot">
 <div><a class="logo" href="index.html" style="color:#F5EFE6"><span><b style="color:#E8A33D">QLD</b> Agent Finder</span></a><p>Find the right agent. Locally.<br>Helping Queensland homeowners compare trusted local real estate agents.</p></div>
 <div><h4>Sellers</h4><ul><li><a href="sell.html">List your home</a></li><li><a href="find-agents.html">Find agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="tools.html">Calculators</a></li><li><a href="guides.html">Guides</a></li></ul></div>
+<div><h4>Top areas</h4><ul>{AREA_LINKS}</ul></div>
 <div><h4>Agents</h4><ul><li><a href="join.html">List yourself</a></li><li><a href="for-agents.html">Why join</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a href="faq.html#agents">Agent FAQ</a></li><li><a data-portal href="#">Agent login</a></li></ul></div>
 <div><h4>Company</h4><ul><li><a href="services.html">Services</a></li><li><a href="areas.html">Areas</a></li><li><a href="about.html">About us</a></li><li><a href="about.html#money">How we make money</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="https://www.facebook.com/qldagentfinder.au/" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/qldagentfinder/" rel="noopener">Instagram</a></li></ul></div>
 </div>
@@ -66,8 +68,37 @@ def hero(eyebrow,h1,lead,crumb=''):
     c=f'<div class="breadcrumb"><a href="index.html">Home</a> › {crumb}</div>' if crumb else ''
     return f'<section class="page-hero"><div class="wrap">{c}<div class="eyebrow">{eyebrow}</div><h1>{h1}</h1><p style="font-size:20px;max-width:680px;opacity:.92;margin:0">{lead}</p></div></section>'
 
-def page(fn,title,desc,body):
-    open(os.path.join(D,fn),'w').write(head(title,desc,'' if fn=='index.html' else fn)+body+FOOT)
+import json, datetime
+SITE='https://qldagentfinder.com.au'
+NOINDEX={'thank-you.html','404.html','compare.html','agent.html'}
+ORG={"@context":"https://schema.org","@type":"Organization","@id":SITE+"/#org","name":"QLD Agent Finder","url":SITE+"/","logo":SITE+"/icon-512.png","email":"contact@qldagentfinder.com.au","slogan":"Find the right agent. Locally.","areaServed":{"@type":"State","name":"Queensland"},"sameAs":["https://www.facebook.com/qldagentfinder.au/","https://www.instagram.com/qldagentfinder/"]}
+WEBSITE={"@context":"https://schema.org","@type":"WebSite","@id":SITE+"/#website","name":"QLD Agent Finder","url":SITE+"/","publisher":{"@id":SITE+"/#org"},"potentialAction":{"@type":"SearchAction","target":SITE+"/find-agents?q={search_term_string}","query-input":"required name=search_term_string"}}
+def clean(fn): return '' if fn=='index.html' else fn[:-5]
+def faq_ld(items): return {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in items]}
+def crumbs_ld(fn,name): return {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":SITE+"/"},{"@type":"ListItem","position":2,"name":name,"item":SITE+"/"+clean(fn)}]}
+def page(fn,title,desc,body,ld=None,crumb=None):
+    html=(head(title,desc,clean(fn))+body+FOOT).replace('{AREA_LINKS}',AREA_LINKS)
+    url=SITE+'/'+clean(fn)
+    lds=list(ld or [])
+    if fn=='index.html': lds=[ORG,WEBSITE]+lds
+    elif fn not in NOINDEX: lds.append(crumbs_ld(fn,crumb or title.split(' | ')[0]))
+    extra=f"""<meta property="og:url" content="{url}">
+<meta property="og:site_name" content="QLD Agent Finder">
+<meta property="og:locale" content="en_AU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{SITE}/og-image.png">
+<meta name="theme-color" content="#7A1F33">
+<link rel="icon" href="favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+"""+('<meta name="robots" content="noindex,follow">\n' if fn in NOINDEX else '<meta name="robots" content="index,follow,max-image-preview:large">\n')
+    extra+=''.join('<script type="application/ld+json">'+json.dumps(x,ensure_ascii=False)+'</script>\n' for x in lds)
+    if fn=='index.html': extra+='<link rel="preload" as="image" href="https://images.unsplash.com/photo-1725406029499-c18ff37c534f?w=1600&q=55&auto=format&fit=crop" fetchpriority="high">\n'
+    html=html.replace('</head>',extra+'</head>',1)
+    open(os.path.join(D,fn),'w').write(html)
+
 
 FAQ_SELL=[("Is QLD Agent Finder really free for sellers?","Yes. It is 100% free for home sellers. Agents in our network pay us, never you."),
 ("Do I have to list with an agent you match me with?","No. There is no obligation. Meet the agents, compare them and decide in your own time."),
@@ -167,7 +198,7 @@ page('index.html','QLD Agent Finder | Compare & Find Top Real Estate Agents in Q
 
 <section>
 <div class="wrap"><div class="cta-band"><h2>Ready to find your agent?</h2><p style="font-size:19px;max-width:560px;margin:0 auto 24px">It takes under a minute, it's free, and there's no obligation.</p><a class="btn btn-gold" href="sell.html">List my home free</a></div></div>
-</section>''')
+</section>''',ld=[faq_ld(FAQ_SELL)])
 
 # ---------------- FIND AGENTS ----------------
 page('find-agents.html','Find & Compare Real Estate Agents in Queensland | QLD Agent Finder','Search Queensland real estate agents by suburb or region. Compare rankings, sales, days on market, reviews and fees.',(hero('Find agents','Find &amp; compare local agents','Search by suburb, sort by what matters to you, and compare up to 3 agents side by side.','Find agents')).replace('<section class="page-hero">','<section class="page-hero" id="findHero">',1).replace('<h1>','<h1 id="findTitle">',1)+'''
@@ -399,7 +430,7 @@ page('about.html','About Us | QLD Agent Finder','About QLD Agent Finder, a Queen
 # ---------------- FAQ ----------------
 page('faq.html','FAQ | QLD Agent Finder','Frequently asked questions from Queensland home sellers and agents.',hero('FAQ','Frequently asked questions','Answers for sellers and agents.','FAQ')+f'''
 <section><div class="wrap" style="max-width:820px"><h2 id="sellers">For sellers</h2>{faq(FAQ_SELL)}<h2 id="agents" style="margin-top:48px">For agents</h2>{faq(FAQ_AGENT)}
-<p style="margin-top:32px">Still have a question? <a href="contact.html">Contact us</a>.</p></div></section>''')
+<p style="margin-top:32px">Still have a question? <a href="contact.html">Contact us</a>.</p></div></section>''',ld=[faq_ld(FAQ_SELL+FAQ_AGENT)])
 
 # ---------------- CONTACT ----------------
 page('contact.html','Contact Us | QLD Agent Finder','Contact QLD Agent Finder.',hero('Contact','We are here to help','Questions from sellers, agents or partners. We reply within 1 business day.','Contact')+'''
@@ -467,7 +498,39 @@ page('services.html','Our Services | QLD Agent Finder','Free services for Queens
 <div class="tile"><h3>Rankings &amp; badges</h3><p>Get ranked on performance, plus Verified and Founding Partner badges.</p></div>
 </div><p style="text-align:center;margin-top:28px"><a class="btn btn-maroon" href="join.html">List myself as an agent</a></p></div></section>""")
 
-urls=['','areas.html','services.html','find-agents.html','rankings.html','sell.html','how-it-works.html','tools.html','guides.html','for-agents.html','join.html','about.html','faq.html','contact.html','privacy.html','terms.html']
-open(os.path.join(D,'sitemap.xml'),'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>https://qldagentfinder.com.au/{u}</loc></url>' for u in urls)+'</urlset>\n')
+REGIONS={
+'Brisbane':("brisbane","From inner-city apartments to leafy character homes, every Brisbane suburb moves a little differently. The right local agent knows your street, your buyers and what recent sales really tell you.",["New Farm","Paddington","Bulimba","Carindale","Indooroopilly","Chermside","Ashgrove","Mount Gravatt","Sunnybank","Toowong","Wynnum","Kedron"]),
+'Logan':("logan","Logan mixes established family suburbs with fast-growing new estates. A local agent who sells here week in, week out knows which features Logan buyers pay for.",["Springwood","Shailer Park","Daisy Hill","Underwood","Rochedale South","Beenleigh","Browns Plains","Logan Reserve","Yarrabilba","Jimboomba","Loganholme","Waterford"]),
+'Gold Coast':("gold-coast","Beachside units, canal homes and hinterland acreage all sell to different buyers. On the Gold Coast, choosing an agent who specialises in your type of property matters.",["Burleigh Heads","Palm Beach","Broadbeach","Southport","Robina","Coomera","Hope Island","Helensvale","Mermaid Beach","Varsity Lakes","Nerang","Currumbin"]),
+'Sunshine Coast':("sunshine-coast","Coastal homes, hinterland acreage and brand-new communities: the Sunshine Coast is many markets in one. A local specialist helps you price and market for the right buyers.",["Noosa Heads","Maroochydore","Buderim","Mooloolaba","Caloundra","Sippy Downs","Peregian Beach","Coolum Beach","Nambour","Birtinya","Pelican Waters","Kawana Island"]),
+'Ipswich':("ipswich","Ipswich blends heritage Queenslanders with new estates in the Springfield and Ripley growth corridor. Local agents know how each pocket compares.",["Springfield Lakes","Redbank Plains","Augustine Heights","Brassall","Ripley","Bellbird Park","Goodna","Yamanto","Raceview","Booval","Rosewood","Karalee"]),
+'Moreton Bay':("moreton-bay","From North Lakes estates to Redcliffe waterfront and Caboolture acreage, Moreton Bay buyers vary a lot. Compare agents who sell in your exact area.",["North Lakes","Mango Hill","Redcliffe","Caboolture","Morayfield","Narangba","Kallangur","Strathpine","Scarborough","Burpengary","Bray Park","Albany Creek"]),
+'Redlands':("redlands","Bayside living, canal homes and island properties make the Redlands unique. A Redlands specialist knows how to present your home to the right buyers.",["Cleveland","Wellington Point","Ormiston","Capalaba","Alexandra Hills","Victoria Point","Thornlands","Birkdale","Redland Bay","Thorneside","Sheldon","Mount Cotton"]),
+'Toowoomba':("toowoomba","Queensland's Garden City has character homes, family suburbs and acreage on the range. A local Toowoomba agent understands buyers from both town and country.",["Rangeville","Highfields","Middle Ridge","Kearneys Spring","Centenary Heights","East Toowoomba","Harristown","Glenvale","Westbrook","Darling Heights","Newtown","Cranley"]),
+}
+for rname,(slug,intro,subs) in REGIONS.items():
+    fn=f'real-estate-agents-{slug}.html'
+    fq=[(f"How do I find the best real estate agent in {rname}?",f"Look for an agent who sells regularly in your suburb, then compare their recent sales, average days on market, reviews and fees. QLD Agent Finder lets you compare {rname} agents side by side for free."),
+        (f"How much do real estate agents charge in {rname}?","Commission varies by agent, property and price, and it is negotiable. Ask each agent for their commission and marketing costs in writing, and use our free commission calculator to compare."),
+        (f"Is QLD Agent Finder free for {rname} sellers?","Yes. It is 100% free for home sellers, with no obligation to list with any agent.")]
+    img=f'https://images.unsplash.com/photo-{{}}?w=1400&q=55&auto=format&fit=crop'
+    body=f"""<section class="page-hero photo" id="findHero" data-region-img="{rname}"><div class="wrap"><div class="breadcrumb"><a href="index.html">Home</a> › <a href="areas.html">Areas</a> › {rname}</div><div class="eyebrow">{rname}, Queensland</div><h1>Top real estate agents in {rname}</h1><p style="font-size:20px;max-width:680px;opacity:.92;margin:0">Compare local {rname} agents on real results: sales, days on market, reviews and fees. Free for sellers.</p><p style="margin:24px 0 0"><a class="btn btn-gold" href="sell.html?region={rname}">Get a free {rname} appraisal</a></p></div></section>
+<section style="padding-top:40px"><div class="wrap">
+<p style="font-size:19px;max-width:820px">{intro}</p>
+<div class="filters"><div class="field"><label for="fQuery">Suburb, agent or agency</label><input id="fQuery" placeholder="e.g. {subs[0]}"></div><div class="field"><label for="fRegion">Region</label><select id="fRegion" data-default="{rname}"></select></div><div class="field"><label for="fSort">Sort by</label><select id="fSort"><option value="score">Ranking score</option><option value="rating">Highest rated</option><option value="sold">Most sales</option><option value="days">Fastest sales</option></select></div></div>
+<p class="small" id="fCount" aria-live="polite"></p><div class="grid3" id="directory"></div>
+</div></section>
+<section class="white"><div class="wrap"><h2>Suburbs we cover in {rname}</h2><div class="chips" style="justify-content:flex-start">"""+''.join(f'<a href="find-agents.html?q={x.replace(" ","%20")}">{x}</a>' for x in subs)+f"""</div></div></section>
+<section><div class="wrap" style="max-width:820px"><h2>Choosing an agent in {rname}</h2>
+<ol><li><b>Shortlist 3 local agents</b> who sell homes like yours in your suburb.</li><li><b>Compare results,</b> not promises: recent sales, days on market and reviews.</li><li><b>Get free appraisals</b> and ask how each price was worked out.</li><li><b>Compare fees in writing,</b> including marketing costs.</li></ol>
+<p><a href="guides.html#questions">5 questions to ask before you sign →</a> · <a href="tools.html#commission">Commission calculator →</a></p>
+<h2 style="margin-top:40px">{rname} FAQs</h2>"""+faq(fq)+f"""</div></section>
+<section style="padding-top:0"><div class="wrap"><div class="cta-band"><h2>Selling in {rname}?</h2><p style="font-size:19px;max-width:560px;margin:0 auto 24px">Get matched with top local agents. Free, no obligation.</p><a class="btn btn-gold" href="sell.html?region={rname}">Get my free appraisal</a></div></div></section>
+<div class="cmpbar" id="cmpbar"><div class="wrap"><span id="cmpCount">0 selected</span><a class="btn btn-gold" id="cmpGo" href="compare.html">Compare now</a></div></div>"""
+    page(fn,f'Top Real Estate Agents in {rname}, QLD | Compare Free | QLD Agent Finder',f'Compare the best real estate agents in {rname}, Queensland. See rankings, recent sales, days on market, reviews and fees, and get a free appraisal.',body,ld=[faq_ld(fq)],crumb=f'Real estate agents in {rname}')
+
+urls=[f'real-estate-agents-{v[0]}.html' for v in REGIONS.values()]+['','areas.html','services.html','find-agents.html','rankings.html','sell.html','how-it-works.html','tools.html','guides.html','for-agents.html','join.html','about.html','faq.html','contact.html','privacy.html','terms.html']
+TODAY=datetime.date.today().isoformat()
+open(os.path.join(D,'sitemap.xml'),'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>{SITE}/{clean(u) if u else ""}</loc><lastmod>{TODAY}</lastmod><priority>{"1.0" if not u else ("0.9" if u.startswith("real-estate") else "0.7")}</priority></url>' for u in urls)+'</urlset>\n')
 open(os.path.join(D,'robots.txt'),'w').write('User-agent: *\nAllow: /\nSitemap: https://qldagentfinder.com.au/sitemap.xml\n')
 print('built')
