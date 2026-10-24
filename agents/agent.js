@@ -15,10 +15,20 @@ var me=null,leads=[],tab='leads';
 
 function toast(t,bad){var d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:'+(bad?'#A3122B':'#0F6B6B')+';color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:99';document.body.appendChild(d);setTimeout(function(){d.remove()},2800)}
 
+var sentTo='';
+(function(){var q=(location.hash||'').replace(/^#/,'');if(!q)return;var p=new URLSearchParams(q);var d=p.get('error_description')||p.get('error');
+  if(d){var m=$('#loginMsg');m.className='msg err';m.textContent=(/expired|invalid/i.test(d)?'That login link has expired or was already used. Request a new one below, or use the code from the email.':d.replace(/\+/g,' '));history.replaceState(null,'',location.pathname)}})();
 $('#loginForm').addEventListener('submit',async function(e){e.preventDefault();var m=$('#loginMsg');m.className='msg';m.textContent='Sending…';
-  var r=await sb.auth.signInWithOtp({email:$('#lEmail').value.trim(),options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname}});
+  sentTo=$('#lEmail').value.trim();
+  var r=await sb.auth.signInWithOtp({email:sentTo,options:{shouldCreateUser:true,emailRedirectTo:location.origin+'/'}});
   if(r.error){m.className='msg err';m.textContent=r.error.message;return}
-  m.className='msg ok';m.textContent='Check your inbox. We sent you a login link ✉️'});
+  m.className='msg ok';m.textContent='Check your inbox. We sent you a login link and a code.';$('#codeBox').hidden=false});
+$('#codeBtn').addEventListener('click',async function(){var m=$('#loginMsg');var t=$('#lCode').value.replace(/\s/g,'');if(!sentTo)sentTo=$('#lEmail').value.trim();
+  if(!sentTo||!t){m.className='msg err';m.textContent='Enter your email, then the code from the email.';return}
+  m.className='msg';m.textContent='Checking…';
+  var r=await sb.auth.verifyOtp({email:sentTo,token:t,type:'email'});
+  if(r.error){m.className='msg err';m.textContent='That code did not work. It may have expired. Request a new one.';return}
+  m.textContent=''});
 $('#logout').addEventListener('click',async function(){await sb.auth.signOut();location.reload()});
 $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(b.dataset.tab)});
 
@@ -74,6 +84,6 @@ function vProfile(){var a=me;
     var r=await sb.from('agents').update(row).eq('id',me.id).select().single();btn.disabled=false;
     if(r.error){$('#pmsg').textContent=r.error.message;return}me=r.data;toast('Profile saved ✓');vProfile()})}
 
-sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_IN'&&!me)boot()});
+sb.auth.onAuthStateChange(function(ev){if(ev==='SIGNED_IN'){if(location.hash)history.replaceState(null,'',location.pathname);if(!me)boot()}});
 boot();
 })();
