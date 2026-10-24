@@ -73,7 +73,7 @@ function card(a,opts){opts=opts||{};var im=QAF_REGION_IMG[a.region];
 function renderAgents(AG){
   window.QAF_AGENTS=AG;
   function regionRank(a){var r=ranked(AG.filter(function(x){return x.region===a.region}));return r.indexOf(a)+1}
-  var empty='<div class="tile" style="grid-column:1/-1"><h3>Agents coming soon</h3><p>We are verifying partner agents across Queensland. Tell us about your property and we will match you with local agents.</p><a class="btn btn-maroon" href="sell.html">Get matched for free</a></div>';
+  var empty='<div class="tile empty-pin" style="grid-column:1/-1"><img src="pinny-wave.png" alt="Pinny the QLD Agent Finder mascot" width="110" height="145"><div><h3>Founding agents are joining now</h3><p>We are verifying the first partner agents across Queensland. Tell us about your property and we will match you with a local agent.</p><div class="btns"><a class="btn btn-maroon" href="sell.html">Get matched for free</a><a class="btn btn-ghost" href="join.html">I am an agent, join free</a></div></div></div>';
 
   var topEl=$('#topAgents');if(topEl){topEl.innerHTML=AG.length?ranked(AG).slice(0,3).map(function(a){return card(a,{rank:regionRank(a)})}).join(''):empty}
 

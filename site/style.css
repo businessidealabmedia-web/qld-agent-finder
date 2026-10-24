@@ -91,8 +91,8 @@ details[open] summary::after{content:"–"}
 footer{background:var(--ink);color:#d9d2c8;padding:56px 0 32px;font-size:15px}
 footer a{color:#d9d2c8;text-decoration:none}
 footer a:hover{color:var(--gold)}
-.foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
-@media(max-width:800px){.foot{grid-template-columns:1fr 1fr}}
+.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;gap:32px}
+@media(max-width:1000px){.foot{grid-template-columns:1fr 1fr 1fr}.foot>:first-child{grid-column:1/-1}}@media(max-width:560px){.foot{grid-template-columns:1fr 1fr}}
 footer h4{color:var(--sand);margin:0 0 12px}
 footer ul{list-style:none;padding:0;margin:0}footer li{margin-bottom:8px}
 .legal{border-top:1px solid #3A333E;margin-top:40px;padding-top:20px;font-size:13px;color:#a69e94}
@@ -214,3 +214,20 @@ footer li a{display:inline-block;padding:9px 0}
  .filters{padding:14px}
 }
 body.no-sticky .sticky-cta{display:none!important}
+
+/* Pinny mascot + polish (v4) */
+.page-hero,.hero.photo{position:relative}
+.page-hero::after,.hero.photo::after{content:"";position:absolute;right:max(24px,calc(50% - 560px));bottom:0;width:230px;height:300px;background:url(pinny-wave.png) no-repeat right bottom/contain;pointer-events:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.28))}
+.hero.photo::after{background-image:url(pinny-shades.png);width:300px;height:420px;bottom:60px;right:max(24px,calc(50% - 540px))}
+.page-hero .wrap>*{max-width:calc(100% - 270px)}
+@media(max-width:1000px){.page-hero::after,.hero.photo::after{display:none}.page-hero .wrap>*{max-width:none}}
+.empty-pin{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.empty-pin img{width:110px;height:auto;flex:none}
+.empty-pin .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.agent-band{background:var(--maroon);color:var(--sand);border-radius:28px;padding:44px 48px;display:flex;align-items:center;justify-content:space-between;gap:32px;position:relative;overflow:hidden;border-bottom:8px solid var(--gold)}
+.agent-band h2{color:var(--sand);margin:6px 0 10px}.agent-band p{max-width:520px;opacity:.92;margin:0 0 18px;font-size:18px}
+.agent-band .eyebrow{color:var(--gold)}.agent-band img{height:240px;width:auto;flex:none;filter:drop-shadow(0 14px 18px rgba(0,0,0,.3))}
+.agent-band .ticks{display:flex;gap:18px;flex-wrap:wrap;font-weight:700;font-size:15px;margin-bottom:22px}.agent-band .ticks span::before{content:"✓ ";color:var(--gold)}
+@media(max-width:760px){.agent-band{padding:32px 24px;flex-direction:column;align-items:flex-start}.agent-band img{height:170px;align-self:center}}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.empty-pin>div{flex:1 1 300px;min-width:0}
