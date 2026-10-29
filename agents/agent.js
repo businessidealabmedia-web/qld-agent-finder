@@ -11,7 +11,7 @@ $('#applyLink').href=site+'/join.html';
 
 if(!CFG.supabaseUrl||!CFG.supabaseAnonKey){$('#setupView').hidden=false;return}
 var sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
-var me=null,leads=[],tab='leads';
+var me=null,leads=[],listings=[],enqs=[],tab='leads';
 
 function toast(t,bad){var d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:'+(bad?'#A3122B':'#0F6B6B')+';color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:99';document.body.appendChild(d);setTimeout(function(){d.remove()},2800)}
 
@@ -41,11 +41,11 @@ async function boot(){if(booting)return;booting=true;try{
   if(!c.data){$('#tabs').hidden=true;$('#main').innerHTML='<div class="box" style="max-width:560px;margin:40px auto"><h2>No agent profile found</h2><p>We couldn\'t find an application for <b>'+esc(s.user.email)+'</b>.</p><p>Apply first, using this same email, and we\'ll review it within 1–2 business days.</p><div class="row" style="justify-content:flex-start"><a class="btn" href="'+esc(site)+'/join.html">Apply to join</a></div></div>';return}
   var r=await sb.from('agents').select('*').eq('id',c.data).single();me=r.data;
   if(me&&me.status==='approved'){$('#viewPublic').hidden=false;$('#viewPublic').href=site+'/agent.html?id='+me.id}
-  await loadLeads();show(tab);
+  await loadLeads();await loadListings();show(tab);
 }finally{booting=false}}
 async function loadLeads(){var r=await sb.from('leads').select('*').eq('assigned_agent',me.id).order('created_at',{ascending:false});leads=r.data||[];
   var n=leads.filter(function(l){return l.status==='assigned'||l.status==='new'}).length;$('#pLeads').hidden=!n;$('#pLeads').textContent=n}
-function show(t){tab=t;$$('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t)});(t==='leads'?vLeads:vProfile)()}
+function show(t){tab=t;$$('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t)});({leads:vLeads,listings:vListings,enq:vEnq,profile:vProfile})[t]()}
 
 function banner(){if(me.status==='approved')return '';
   return '<div class="box" style="max-width:none;margin-bottom:18px;background:#fdf1dc;border-color:#f3dcb0;box-shadow:none"><b>'+(me.status==='pending'?'Your profile is under review.':'Your profile is not public right now.')+'</b> '+(me.status==='pending'?'Complete your details below. We\'ll email you once it\'s live.':'Contact us at contact@qldagentfinder.com.au')+'</div>'}
@@ -57,6 +57,89 @@ function vLeads(){
    '<td><textarea data-nt="'+l.id+'" rows="2" aria-label="Notes">'+esc(l.agent_notes)+'</textarea></td><td><button class="btn sm" data-save="'+l.id+'">Save</button></td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">No leads yet. When we match a seller to you, they\'ll appear here, and we\'ll let you know.</div></div>');
   $$('[data-save]').forEach(function(b){b.onclick=async function(){var id=b.dataset.save;var r=await sb.from('leads').update({status:$('[data-st="'+id+'"]').value,agent_notes:$('[data-nt="'+id+'"]').value.trim()}).eq('id',id);
     if(r.error)return toast(r.error.message,true);toast('Saved ✓');await loadLeads()}})}
+
+
+/* ---------- listings (homes for sale) ---------- */
+var TYPES=['House','Unit / Apartment','Townhouse','Land','Acreage'];
+var thumbOf=function(u){return u?u.replace(/\.(jpe?g|png|webp)$/i,'-t.$1'):''};
+async function loadListings(){var r=await sb.from('listings').select('*').eq('agent_id',me.id).order('updated_at',{ascending:false});listings=r.data||[];
+  var e=await sb.from('listing_enquiries').select('*, listings(title,suburb)').order('created_at',{ascending:false});enqs=e.data||[];
+  var n=enqs.filter(function(x){return x.status==='new'}).length;var pe=$('#pEnq');if(pe){pe.hidden=!n;pe.textContent=n}}
+function vListings(){
+  var ok=me.status==='approved';
+  $('#main').innerHTML=banner()+'<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><h1 style="margin:0">My listings</h1>'+(ok?'<button class="btn gold" id="newL">+ New listing</button>':'')+'</div>'+
+   (ok?'<p style="color:#5E5862">New and edited listings are checked by QLD Agent Finder before they go live, usually within a day.</p>':'<div class="box" style="max-width:none"><b>Listings unlock when your profile is approved.</b></div>')+
+   (listings.length?'<div class="tbl"><table><thead><tr><th></th><th>Listing</th><th>Price</th><th>Status</th><th></th></tr></thead><tbody>'+listings.map(function(l){return '<tr><td>'+(l.photos&&l.photos[0]?'<img src="'+esc(thumbOf(l.photos[0]))+'" alt="" width="72" height="52" style="border-radius:8px;object-fit:cover" onerror="this.onerror=null;this.src=\''+esc(l.photos[0])+'\'">':'')+'</td><td><b>'+esc(l.title)+'</b><br>'+esc(l.suburb)+'</td><td>'+esc(l.price_display)+'</td><td><span class="tag '+esc(l.status)+'">'+esc(l.status)+'</span>'+(l.status==='rejected'&&l.admin_notes?'<br><span style="font-size:12px;color:#A3122B">'+esc(l.admin_notes)+'</span>':'')+'</td><td style="white-space:nowrap"><button class="btn sm" data-le="'+l.id+'">Edit</button> '+(l.status==='live'?'<a class="btn sm ghost" target="_blank" rel="noopener" href="'+site+'/property.html?id='+l.id+'">View</a> <button class="btn sm ghost" data-ls="'+l.id+'">Mark sold</button> ':'')+(['pending','live','sold'].indexOf(l.status)>-1?'<button class="btn sm ghost" data-lw="'+l.id+'">Withdraw</button>':'')+(['draft','rejected','withdrawn'].indexOf(l.status)>-1?'<button class="btn sm ghost" data-ld="'+l.id+'">Delete</button>':'')+'</td></tr>'}).join('')+'</tbody></table></div>':(ok?'<div class="tbl"><div class="empty">No listings yet. Click “New listing” to add your first home.</div></div>':''));
+  if($('#newL'))$('#newL').onclick=function(){listingForm(null)};
+  var setSt=async function(id,st){var r=await sb.from('listings').update({status:st}).eq('id',id);if(r.error)return toast(r.error.message,true);toast('Updated ✓');await loadListings();vListings()};
+  $$('[data-le]').forEach(function(b){b.onclick=function(){listingForm(listings.find(function(x){return x.id===b.dataset.le}))}});
+  $$('[data-ls]').forEach(function(b){b.onclick=function(){if(confirm('Mark this home as sold?'))setSt(b.dataset.ls,'sold')}});
+  $$('[data-lw]').forEach(function(b){b.onclick=function(){if(confirm('Withdraw this listing? It will no longer show publicly.'))setSt(b.dataset.lw,'withdrawn')}});
+  $$('[data-ld]').forEach(function(b){b.onclick=async function(){if(!confirm('Delete this listing permanently?'))return;var r=await sb.from('listings').delete().eq('id',b.dataset.ld);if(r.error)return toast(r.error.message,true);toast('Deleted');await loadListings();vListings()}})}
+
+function resizeTo(file,max,q){return new Promise(function(res,rej){var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){b?res(b):rej(new Error('Could not process photo'))},'image/jpeg',q)};im.onerror=function(){rej(new Error('That file is not a valid image'))};im.src=u})}
+var BUCKET='listing-photos';
+function pathOf(url){var i=url.indexOf('/'+BUCKET+'/');return i<0?null:url.slice(i+BUCKET.length+2)}
+
+function listingForm(l){var isNew=!l;l=l||{status:'draft',photos:[],features:[],region:me.region||'Brisbane',property_type:'House'};
+  var photos=(l.photos||[]).slice();
+  var inp=function(id,label,val,type,full,ph,attrs){return '<div'+(full?' class="full"':'')+'><label for="'+id+'">'+label+'</label><input id="'+id+'" '+(type?'type="'+type+'" ':'')+'value="'+esc(val==null?'':val)+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+(attrs||'')+'></div>'};
+  var dt=l.auction_at?new Date(new Date(l.auction_at).getTime()-new Date(l.auction_at).getTimezoneOffset()*60000).toISOString().slice(0,16):'';
+  $('#main').innerHTML=banner()+'<p><button class="btn sm ghost" id="lback" type="button">← Back to listings</button></p><h1>'+(isNew?'New listing':'Edit listing')+'</h1>'+(l.status==='rejected'&&l.admin_notes?'<div class="box" style="max-width:none;background:#fbe9ec;border-color:#f1c3cb;box-shadow:none"><b>Needs changes:</b> '+esc(l.admin_notes)+'</div>':'')+(l.status==='live'?'<div class="box" style="max-width:none;background:#fdf1dc;border-color:#f3dcb0;box-shadow:none">This listing is live. If you change it, it goes back for review before the changes show.</div>':'')+
+  '<form class="box" style="max-width:860px" id="lf"><div class="grid2">'+
+  inp('ltitle','Headline',l.title,'',1,'e.g. Renovated 4 bedroom family home near schools','maxlength="120" required')+
+  '<div><label for="ltype">Property type</label><select id="ltype">'+TYPES.map(function(t){return '<option'+(t===l.property_type?' selected':'')+'>'+t+'</option>'}).join('')+'</select></div>'+
+  '<div><label for="lregion">Region</label><select id="lregion">'+REGIONS.map(function(r){return '<option'+(r===l.region?' selected':'')+'>'+r+'</option>'}).join('')+'</select></div>'+
+  inp('lsub','Suburb',l.suburb,'',0,'','maxlength="60" required')+inp('lpc','Postcode',l.postcode,'',0,'4123','inputmode="numeric" maxlength="4"')+
+  inp('laddr','Street address',l.address_line,'',1,'12 Example Street','maxlength="120"')+
+  '<div class="full"><label class="chk"><input type="checkbox" id="lhide"'+(l.hide_address?' checked':'')+'> Hide the street address on the public page</label></div>'+
+  inp('lprice','Price wording shown to buyers',l.price_display,'',0,'e.g. Offers over $950,000 or Auction or Contact agent','maxlength="60" required')+
+  inp('lpnum','Price number for search filters (optional)',l.price_num,'number',0,'950000','min="0"')+
+  inp('lbeds','Bedrooms',l.beds,'number',0,'','min="0" max="20"')+inp('lbaths','Bathrooms',l.baths,'number',0,'','min="0" max="20"')+inp('lcars','Car spaces',l.cars,'number',0,'','min="0" max="20"')+inp('lland','Land size (m²)',l.land_m2,'number',0,'','min="0"')+
+  inp('lopen','Open home times',l.open_homes,'',1,'e.g. Saturday 10:00 to 10:30am','maxlength="300"')+
+  '<div><label for="lauc">Auction date and time (optional)</label><input id="lauc" type="datetime-local" value="'+esc(dt)+'"></div>'+
+  inp('lfeat','Features (comma separated, up to 20)',(l.features||[]).join(', '),'',1,'Air conditioning, Pool, Solar panels')+
+  '<div class="full"><label for="ldesc">Description</label><textarea id="ldesc" rows="8" maxlength="4000" placeholder="Describe the home, the location and what buyers will love. Plain text only, no web links.">'+esc(l.description)+'</textarea></div>'+
+  '<div class="full"><label>Photos (up to 15). The first photo is the cover.</label><div id="phs" class="phs"></div><input id="lfiles" type="file" accept="image/jpeg,image/png,image/webp" multiple><div style="font-size:12px;color:#5E5862">Photos are resized automatically. Use landscape photos of the home you are selling.</div></div></div>'+
+  '<p style="font-size:13px;color:#5E5862">By submitting you confirm you are authorised to advertise this property, the details are accurate, and the price shown is not misleading under Queensland property laws. QLD Agent Finder may remove or ask you to change any listing.</p>'+
+  '<div class="row"><button type="button" class="btn ghost" id="lsave">Save draft</button><button type="submit" class="btn gold" id="lsubmit">'+(l.status==='live'?'Save changes (re-check)':'Submit for review')+'</button></div><p class="msg err" id="lmsg" role="alert"></p></form>';
+  var drawP=function(){$('#phs').innerHTML=photos.map(function(u,i){return '<div class="ph"><img src="'+esc(thumbOf(u))+'" alt="" onerror="this.onerror=null;this.src=\''+esc(u)+'\'">'+(i===0?'<span class="cv">Cover</span>':'')+'<div class="pa"><button type="button" data-pm="'+i+'" aria-label="Make cover">★</button><button type="button" data-pl="'+i+'" aria-label="Move earlier">←</button><button type="button" data-pr="'+i+'" aria-label="Move later">→</button><button type="button" data-px="'+i+'" aria-label="Remove">✕</button></div></div>'}).join('');
+    $$('[data-pm]').forEach(function(b){b.onclick=function(){var i=+b.dataset.pm;photos.unshift(photos.splice(i,1)[0]);drawP()}});
+    $$('[data-pl]').forEach(function(b){b.onclick=function(){var i=+b.dataset.pl;if(i>0){photos.splice(i-1,0,photos.splice(i,1)[0]);drawP()}}});
+    $$('[data-pr]').forEach(function(b){b.onclick=function(){var i=+b.dataset.pr;if(i<photos.length-1){photos.splice(i+1,0,photos.splice(i,1)[0]);drawP()}}});
+    $$('[data-px]').forEach(function(b){b.onclick=function(){var i=+b.dataset.px,u=photos.splice(i,1)[0];var pa=pathOf(u);if(pa&&l.photos.indexOf(u)<0){sb.storage.from(BUCKET).remove([pa,pa.replace(/\.jpg$/,'-t.jpg')])}drawP()}})};
+  drawP();
+  $('#lback').onclick=function(){vListings()};
+  $('#lfiles').addEventListener('change',async function(){var files=Array.prototype.slice.call(this.files),m=$('#lmsg');m.className='msg';
+    if(photos.length+files.length>15){m.className='msg err';m.textContent='You can add up to 15 photos.';this.value='';return}
+    var uid=(await sb.auth.getUser()).data.user.id;m.textContent='Uploading '+files.length+' photo'+(files.length>1?'s':'')+'…';
+    try{for(var i=0;i<files.length;i++){var f=files[i];var big=await resizeTo(f,1600,.82),sm=await resizeTo(f,640,.78);
+      var base=uid+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
+      var a=await sb.storage.from(BUCKET).upload(base+'.jpg',big,{contentType:'image/jpeg'});if(a.error)throw a.error;
+      var t=await sb.storage.from(BUCKET).upload(base+'-t.jpg',sm,{contentType:'image/jpeg'});if(t.error)throw t.error;
+      photos.push(sb.storage.from(BUCKET).getPublicUrl(base+'.jpg').data.publicUrl)}
+      m.className='msg ok';m.textContent='Photos added.';drawP()}catch(e){m.className='msg err';m.textContent=e.message||'Upload failed'}
+    this.value=''});
+  var save=async function(submit){var m=$('#lmsg');m.className='msg err';m.textContent='';
+    var n=function(id){var v=$(id).value.trim();return v===''?null:parseInt(v,10)};
+    var row={title:$('#ltitle').value.trim(),property_type:$('#ltype').value,region:$('#lregion').value,suburb:$('#lsub').value.trim(),postcode:$('#lpc').value.trim()||null,address_line:$('#laddr').value.trim()||null,hide_address:$('#lhide').checked,
+      price_display:$('#lprice').value.trim(),price_num:n('#lpnum'),beds:n('#lbeds'),baths:n('#lbaths'),cars:n('#lcars'),land_m2:n('#lland'),open_homes:$('#lopen').value.trim()||null,auction_at:$('#lauc').value?new Date($('#lauc').value).toISOString():null,
+      features:$('#lfeat').value.split(',').map(function(x){return x.trim()}).filter(Boolean).slice(0,20),description:$('#ldesc').value.trim()||null,photos:photos};
+    if(row.title.length<5){m.textContent='Add a headline (at least 5 characters).';return}if(!row.suburb||!row.price_display){m.textContent='Suburb and price wording are required.';return}
+    if(row.postcode&&!/^\d{4}$/.test(row.postcode)){m.textContent='Postcode must be 4 digits.';return}
+    if(submit){if(!photos.length){m.textContent='Add at least one photo before submitting.';return}if(!row.description||row.description.length<40){m.textContent='Add a description of at least 40 characters.';return}}
+    var btns=$$('#lf button');btns.forEach(function(b){b.disabled=true});
+    var r;if(isNew){row.agent_id=me.id;row.status=submit?'pending':'draft';r=await sb.from('listings').insert(row).select().single()}
+    else{if(l.status!=='live')row.status=submit?'pending':(l.status==='pending'?'draft':l.status);r=await sb.from('listings').update(row).eq('id',l.id).select().single()}
+    btns.forEach(function(b){b.disabled=false});
+    if(r.error){m.textContent=r.error.message;return}
+    toast(submit?'Submitted for review ✓':'Saved ✓');await loadListings();vListings()};
+  $('#lsave').onclick=function(){save(false)};
+  $('#lf').addEventListener('submit',function(e){e.preventDefault();save(true)})}
+
+function vEnq(){
+  $('#main').innerHTML=banner()+'<h1>Buyer enquiries</h1>'+(enqs.length?'<div class="tbl"><table><thead><tr><th>Received</th><th>Property</th><th>Buyer</th><th>Message</th><th>Status</th><th></th></tr></thead><tbody>'+enqs.map(function(e){return '<tr><td>'+fmt(e.created_at)+'</td><td>'+esc(e.listings&&e.listings.title)+'<br><span class="small">'+esc(e.listings&&e.listings.suburb)+'</span></td><td><b>'+esc(e.name)+'</b><br><a href="mailto:'+esc(e.email)+'">'+esc(e.email)+'</a>'+(e.phone?'<br><a href="tel:'+esc(e.phone)+'">'+esc(e.phone)+'</a>':'')+'</td><td style="white-space:pre-line;max-width:320px">'+esc(e.message)+'</td><td><span class="tag '+(e.status==='new'?'pending':'approved')+'">'+esc(e.status)+'</span></td><td>'+(e.status==='new'?'<button class="btn sm" data-done="'+e.id+'">Mark done</button>':'')+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">No enquiries yet. They also arrive by email.</div></div>');
+  $$('[data-done]').forEach(function(b){b.onclick=async function(){var r=await sb.from('listing_enquiries').update({status:'done'}).eq('id',b.dataset.done);if(r.error)return toast(r.error.message,true);await loadListings();vEnq()}})}
 
 function vProfile(){var a=me;
   var inp=function(id,label,val,type,full){return '<div'+(full?' class="full"':'')+'><label for="'+id+'">'+label+'</label><input id="'+id+'" '+(type?'type="'+type+'" ':'')+'value="'+esc(val)+'"></div>'};

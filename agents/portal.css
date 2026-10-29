@@ -34,3 +34,7 @@ th{background:#f4ede3;font-size:12px;text-transform:uppercase;letter-spacing:.05
 .kv{display:grid;grid-template-columns:160px 1fr;gap:6px 12px;font-size:14px}.kv b{color:var(--mu)}
 .empty{padding:30px;text-align:center;color:var(--mu)}
 .chk{display:flex;align-items:center;gap:8px;font-weight:700;margin-top:12px}.chk input{width:18px;min-height:0;height:18px}
+
+.phs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:8px 0 12px}.ph{position:relative;border-radius:12px;overflow:hidden;background:#eee}.ph img{width:100%;height:96px;object-fit:cover;display:block}.ph .cv{position:absolute;left:6px;top:6px;background:#7A1F33;color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px}
+.ph .pa{display:flex;justify-content:space-between;background:#fff;padding:2px}.ph .pa button{flex:1;border:0;background:none;cursor:pointer;font-size:15px;padding:6px 0;min-height:32px}.ph .pa button:hover{background:#f4ece1}
+.tag.live{background:#d7f0e6;color:#0b5b3f}.tag.sold{background:#e5def5;color:#40307a}.tag.draft,.tag.withdrawn{background:#eee;color:#555}

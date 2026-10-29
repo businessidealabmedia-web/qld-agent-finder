@@ -10,7 +10,7 @@ var nice=function(s){return String(s||'').replace(/_/g,' ')};
 
 if(!CFG.supabaseUrl||!CFG.supabaseAnonKey){$('#setupView').hidden=false;return}
 var sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
-var state={tab:'overview',agents:[],leads:[],msgs:[]};
+var state={tab:'overview',agents:[],leads:[],msgs:[],listings:[]};
 
 /* ---------- auth ---------- */
 async function boot(){
@@ -32,16 +32,17 @@ async function loadAll(){
   var l=await sb.from('leads').select('*').order('created_at',{ascending:false}).limit(1000);
   var m=await sb.from('contacts').select('*').order('created_at',{ascending:false}).limit(500);
   if(a.error||l.error||m.error){toast((a.error||l.error||m.error).message,true)}
-  state.agents=a.data||[];state.leads=l.data||[];state.msgs=m.data||[];
+  var li=await sb.from('listings').select('*, agents(name,agency,email)').order('updated_at',{ascending:false}).limit(500);
+  state.agents=a.data||[];state.leads=l.data||[];state.msgs=m.data||[];state.listings=li.data||[];
   var pend=state.agents.filter(function(x){return x.status==='pending'}).length,nl=state.leads.filter(function(x){return x.status==='new'}).length,nm=state.msgs.filter(function(x){return x.status==='new'}).length;
-  [['#pPending',pend],['#pLeads',nl],['#pMsgs',nm]].forEach(function(p){var e=$(p[0]);e.hidden=!p[1];e.textContent=p[1]});
+  [['#pPending',pend],['#pLeads',nl],['#pMsgs',nm],['#pListings',state.listings.filter(function(x){return x.status==='pending'}).length]].forEach(function(p){var e=$(p[0]);e.hidden=!p[1];e.textContent=p[1]});
 }
 function agentName(id){var a=state.agents.find(function(x){return x.id===id});return a?a.name:''}
 function toast(t,bad){var d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:'+(bad?'#A3122B':'#0F6B6B')+';color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:99';document.body.appendChild(d);setTimeout(function(){d.remove()},2800)}
 
 /* ---------- views ---------- */
 $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(b.dataset.tab)});
-function show(t){state.tab=t;$$('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t)});({overview:vOverview,applications:vApps,agents:vAgents,leads:vLeads,messages:vMsgs})[t]()}
+function show(t){state.tab=t;$$('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t)});({overview:vOverview,applications:vApps,agents:vAgents,leads:vLeads,listings:vListings,messages:vMsgs})[t]()}
 
 function vOverview(){var A=state.agents,L=state.leads;
   var c=function(f){return A.filter(f).length};
@@ -76,6 +77,27 @@ function vLeads(){
 function vMsgs(){var M=state.msgs;
   $('#main').innerHTML='<h1>Messages</h1>'+(M.length?'<div class="tbl"><table><thead><tr><th>Received</th><th>From</th><th>Type</th><th>Message</th><th>Status</th><th></th></tr></thead><tbody>'+M.map(function(m){return '<tr><td>'+fmt(m.created_at)+'</td><td><b>'+esc(m.name)+'</b><br><a href="mailto:'+esc(m.email)+'">'+esc(m.email)+'</a></td><td>'+esc(m.type)+'</td><td style="max-width:420px;white-space:pre-wrap">'+esc(m.message)+'</td><td><span class="tag '+esc(m.status)+'">'+esc(m.status)+'</span></td><td>'+(m.status==='new'?'<button class="btn sm teal" data-done="'+m.id+'">Mark done</button>':'')+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">No messages yet.</div></div>');
   $$('[data-done]').forEach(function(b){b.addEventListener('click',async function(){var r=await sb.from('contacts').update({status:'done'}).eq('id',b.dataset.done);if(r.error)return toast(r.error.message,true);await loadAll();vMsgs()})})}
+
+
+/* ---------- listings (homes for sale) ---------- */
+var thumbOf=function(u){return u?u.replace(/\.(jpe?g|png|webp)$/i,'-t.$1'):''};
+function vListings(){var pend=state.listings.filter(function(x){return x.status==='pending'}).length;
+  $('#main').innerHTML='<h1>Listings</h1><p>Review each listing before it goes public. Check the photos, price wording and that the agent is real.</p><div class="bar"><select id="lst"><option value="pending">Needs review ('+pend+')</option><option value="">All statuses</option><option>live</option><option>sold</option><option>draft</option><option>withdrawn</option><option>rejected</option></select></div><div id="lstlist"></div>';
+  var draw=function(){var st=$('#lst').value,list=state.listings.filter(function(l){return !st||l.status===st});
+    $('#lstlist').innerHTML=list.length?'<div class="tbl"><table><thead><tr><th></th><th>Listing</th><th>Agent</th><th>Price</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>'+list.map(function(l){return '<tr><td>'+(l.photos&&l.photos[0]?'<img src="'+esc(thumbOf(l.photos[0]))+'" alt="" width="72" height="52" style="border-radius:8px;object-fit:cover" onerror="this.onerror=null;this.src=\''+esc(l.photos[0])+'\'">':'')+'</td><td><b>'+esc(l.title)+'</b><br>'+esc(l.suburb)+' · '+esc(l.property_type)+'</td><td>'+esc(l.agents&&l.agents.name)+'<br><span class="small">'+esc(l.agents&&l.agents.agency)+'</span></td><td>'+esc(l.price_display)+'</td><td><span class="tag '+esc(l.status)+'">'+esc(l.status)+'</span></td><td>'+fmt(l.updated_at)+'</td><td><button class="btn sm" data-review="'+l.id+'">Review</button></td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">Nothing here.</div></div>';
+    $$('[data-review]').forEach(function(b){b.onclick=function(){reviewListing(state.listings.find(function(x){return x.id===b.dataset.review}))}})};
+  $('#lst').addEventListener('input',draw);draw()}
+function reviewListing(l){
+  var kv=[['Agent',(l.agents&&l.agents.name)+' · '+(l.agents&&l.agents.agency)+' · '+(l.agents&&l.agents.email)],['Price',l.price_display+(l.price_num?' (filter value $'+l.price_num.toLocaleString()+')':'')],['Address',[l.address_line,l.suburb,l.postcode].filter(Boolean).join(', ')+(l.hide_address?' (street hidden publicly)':'')],['Type',[l.property_type,l.beds+' bed',l.baths+' bath',l.cars+' car',l.land_m2&&l.land_m2+' m²'].filter(Boolean).join(' · ')],['Open home',l.open_homes],['Auction',l.auction_at&&fmt(l.auction_at)],['Features',(l.features||[]).join(', ')]];
+  open('<h2>'+esc(l.title)+'</h2><p><span class="tag '+esc(l.status)+'">'+esc(l.status)+'</span></p><div class="phgrid">'+(l.photos||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(thumbOf(u))+'" alt="" onerror="this.onerror=null;this.src=\''+esc(u)+'\'"></a>'}).join('')+'</div>'+(l.photos&&l.photos.length?'':'<p class="msg err">No photos uploaded.</p>')+
+   '<div class="kv">'+kv.filter(function(x){return x[1]}).map(function(x){return '<b>'+x[0]+'</b><span>'+esc(x[1])+'</span>'}).join('')+'</div><p style="white-space:pre-line">'+esc(l.description)+'</p>'+
+   '<label for="lnote">Note to agent (shown if you reject)</label><textarea id="lnote" rows="2">'+esc(l.admin_notes)+'</textarea>'+
+   '<div class="row"><button class="btn red" id="ldelx">Delete</button><button class="btn ghost" id="lcl">Close</button>'+(l.status==='live'?'<button class="btn ghost" id="lwd">Take offline</button><button class="btn ghost" id="lsold">Mark sold</button>':'<button class="btn ghost" id="lrej">Reject</button><button class="btn teal" id="lok">Approve &amp; publish</button>')+'</div><p class="msg err" id="lmsg2"></p>');
+  var set=async function(st){var r=await sb.from('listings').update({status:st,admin_notes:$('#lnote').value.trim()||null}).eq('id',l.id);if(r.error){$('#lmsg2').textContent=r.error.message;return}close();toast('Saved ✓');await loadAll();show('listings')};
+  $('#lcl').onclick=close;
+  if($('#lok'))$('#lok').onclick=function(){set('live')};if($('#lrej'))$('#lrej').onclick=function(){if(!$('#lnote').value.trim()){$('#lmsg2').textContent='Add a short reason for the agent.';return}set('rejected')};
+  if($('#lwd'))$('#lwd').onclick=function(){set('withdrawn')};if($('#lsold'))$('#lsold').onclick=function(){set('sold')};
+  $('#ldelx').onclick=async function(){if(!confirm('Delete this listing permanently?'))return;var r=await sb.from('listings').delete().eq('id',l.id);if(r.error)return toast(r.error.message,true);close();toast('Deleted');await loadAll();show('listings')}}
 
 function bindRows(){
   $$('[data-edit-agent]').forEach(function(b){b.onclick=function(){agentForm(state.agents.find(function(a){return a.id===b.dataset.editAgent}))}});
