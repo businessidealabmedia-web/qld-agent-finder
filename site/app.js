@@ -72,7 +72,7 @@ function card(a,opts){opts=opts||{};var im=QAF_REGION_IMG[a.region];
   '<div class="kpis"><div><b>'+(a.rating?a.rating.toFixed(1)+'★':'New')+'</b><span>'+revTxt(a)+'</span></div><div><b>'+stat(a.sold12m)+'</b><span>sold (12m)</span></div><div><b>'+days(a)+'</b><span>avg days</span></div></div>'+
   '<div class="small"><b>Suburbs:</b> '+esc(a.suburbs.join(', '))+'<br><b>Fees:</b> '+esc(a.commission)+'</div>'+
   (opts.compare?'<label class="chk"><input type="checkbox" data-cmp="'+esc(a.id)+'"> Add to compare</label>':'')+
-  '<div class="row"><a class="btn btn-ghost" href="agent.html?id='+encodeURIComponent(a.id)+'">View profile</a><a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Free appraisal</a></div></article>'}
+  '<div class="row"><a class="btn btn-ghost" href="agent.html?id='+encodeURIComponent(a.id)+'">View profile</a><a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Contact agent</a></div></article>'}
 
 function renderAgents(AG){
   window.QAF_AGENTS=AG;
@@ -100,7 +100,7 @@ function renderAgents(AG){
   var cmp=$('#compareTable');
   if(cmp){var ids=(params.get('ids')||'').split(',').filter(Boolean),list=AG.filter(function(a){return ids.indexOf(a.id)>-1});
     if(list.length<2){cmp.innerHTML='<p>Select 2 or 3 agents on the <a href="find-agents.html">Find Agents</a> page to compare them side by side.</p>'}
-    else{var rows=[['Agency',function(a){return esc(a.agency)}],['Region',function(a){return esc(a.region)}],['Ranking score',function(a){return qafHasData(a)?'<b>'+qafScore(a)+'/100</b>':'New'}],['Rating',function(a){return a.rating?a.rating.toFixed(1)+'★ ('+a.reviews+')':'New'}],['Sold last 12 months',function(a){return stat(a.sold12m)}],['Average days on market',function(a){return days(a)}],['Experience',function(a){return a.years?a.years+' years':'—'}],['Typical fees',function(a){return esc(a.commission)}],['Specialty',function(a){return esc(a.specialty)}],['Suburbs',function(a){return esc(a.suburbs.join(', '))}],['',function(a){return '<a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Free appraisal</a>'}]];
+    else{var rows=[['Agency',function(a){return esc(a.agency)}],['Region',function(a){return esc(a.region)}],['Ranking score',function(a){return qafHasData(a)?'<b>'+qafScore(a)+'/100</b>':'New'}],['Rating',function(a){return a.rating?a.rating.toFixed(1)+'★ ('+a.reviews+')':'New'}],['Sold last 12 months',function(a){return stat(a.sold12m)}],['Average days on market',function(a){return days(a)}],['Experience',function(a){return a.years?a.years+' years':'—'}],['Typical fees',function(a){return esc(a.commission)}],['Specialty',function(a){return esc(a.specialty)}],['Suburbs',function(a){return esc(a.suburbs.join(', '))}],['',function(a){return '<a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Contact agent</a>'}]];
       cmp.innerHTML='<div class="table-box"><table class="compare"><thead><tr><th scope="col">Compare</th>'+list.map(function(a){return '<th scope="col">'+esc(a.name)+(a.demo?' <small>(demo)</small>':'')+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+list.map(function(a){return '<td>'+r[1](a)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'}}
 
   var prof=$('#profile');
@@ -125,7 +125,7 @@ function renderAgents(AG){
 
   var at=$('#areaTiles');if(at){at.innerHTML=QAF_REGIONS.map(function(r){var n=AG.filter(function(a){return a.region===r}).length;return '<a class="area" href="real-estate-agents-'+r.toLowerCase().replace(/ /g,'-')+'.html"><img src="'+QAF_IMG(QAF_REGION_IMG[r],600)+'" alt="'+r+', Queensland" loading="lazy" width="600" height="450"><span>'+r+'<small>'+(n?n+' agent'+(n===1?'':'s')+' · ':'')+'View agents →</small></span></a>'}).join('')}
 }
-loadAgents().then(renderAgents);
+loadAgents().then(renderAgents).then(function(){if(window.qafReveal)window.qafReveal()});
 
 /* ---------- static bits ---------- */
 var hs=$('#homeSearch');if(hs){var hr=$('#hsRegion');hr.innerHTML='<option value="">All QLD</option>'+QAF_REGIONS.map(function(x){return '<option>'+x+'</option>'}).join('')}
@@ -140,3 +140,23 @@ if(document.querySelector('form[data-steps],form[name=contact],#profile'))docume
 var fr=document.getElementById('fRegion');if(fr&&fr.dataset.default&&!params.get('region'))params.set('region',fr.dataset.default);
 var rh=document.querySelector('[data-region-img]');if(rh&&QAF_REGION_IMG[rh.dataset.regionImg])rh.style.backgroundImage='linear-gradient(rgba(79,18,32,.9),rgba(122,31,51,.82)),url('+QAF_IMG(QAF_REGION_IMG[rh.dataset.regionImg],1400)+')';
 $$('[data-portal]').forEach(function(a){a.href=CFG.agentPortalUrl||'#'});
+
+/* ---------- motion: typed city line + scroll reveal ---------- */
+(function(){
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var t=document.getElementById('typed');
+  if(t){var words=['in Brisbane','on the Gold Coast','in Logan','on the Sunshine Coast','in Ipswich','in Moreton Bay','in Redlands','in Toowoomba'],w=0,c=0,del=false;
+    if(reduce){t.textContent=words[0]}
+    else{(function tick(){var full=words[w];t.textContent=full.slice(0,c);var d=del?32:75;
+      if(!del&&c===full.length){del=true;d=1700}else if(del&&c===0){del=false;w=(w+1)%words.length;d=350}else c+=del?-1:1;
+      setTimeout(tick,d)})()}}
+  window.qafReveal=function(){
+    if(reduce||!('IntersectionObserver' in window))return;
+    var io=window.qafIO=window.qafIO||new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');window.qafIO.unobserve(e.target)}})},{threshold:.15,rootMargin:'0px 0px -6% 0px'});
+    var sel='main section h2, .choice, .why li, .agent, .area, details, .guide, .split>*, .matchband, .cta-band, .agent-band, .tile';
+    var n=0;document.querySelectorAll(sel).forEach(function(el){if(el.closest('.home-hero')||el.classList.contains('reveal'))return;
+      el.classList.add('reveal');el.style.setProperty('--d',(n%4)*80+'ms');n++;io.observe(el)});
+    document.querySelectorAll('.stepper').forEach(function(el){if(!el.dataset.io){el.dataset.io=1;io.observe(el)}});
+  };
+  window.qafReveal();
+})();

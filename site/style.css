@@ -349,3 +349,46 @@ a[href$="→"],.tile>a:last-child{display:inline-block;padding:10px 0}
 .agent .row .btn-ghost{border-width:2px;background:#fff}
 #findHero{padding:40px 0 64px}
 @media(max-width:700px){.home-hero{padding:44px 0 88px}.home-hero h1{font-size:42px}.matchband{padding:26px 22px}.filters.lift{margin-top:-28px}}
+
+/* ===== v7: plain wording, no mascot, purposeful motion (29 Oct 2026) ===== */
+.sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* mascot removed from site pages */
+.page-hero::after,.hero.photo::after{display:none!important}
+.page-hero .wrap>*{max-width:none!important}
+.empty-pin img,.agent-band img{display:none}
+/* centred hero */
+.center-hero{text-align:center}
+.center-hero h1{max-width:900px;margin:0 auto 20px;font-size:clamp(40px,6vw,76px)}
+.typed-line{display:block;color:var(--gold);min-height:1.1em}
+.caret{display:inline-block;width:3px;height:.9em;background:var(--gold);margin-left:4px;vertical-align:-.08em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.center-hero .lead{margin:0 auto 30px}
+.center-hero .search{margin:0 auto;text-align:left}
+.center-hero .quick,.center-hero .trust2{justify-content:center}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.home-hero .wrap>*{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+.home-hero .wrap>*:nth-child(2){animation-delay:.12s}.home-hero .wrap>*:nth-child(3){animation-delay:.24s}.home-hero .wrap>*:nth-child(4){animation-delay:.36s}.home-hero .wrap>*:nth-child(5){animation-delay:.48s}
+.home-hero{background-size:cover}
+@keyframes drift{from{background-position:50% 40%}to{background-position:50% 60%}}
+/* scroll reveal (added by JS, so content is always visible without it) */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
+.reveal.in{opacity:1;transform:none}
+.stepper::before{transform:scaleX(0);transform-origin:left;transition:transform 1.3s cubic-bezier(.4,.1,.2,1) .25s}
+.stepper.in::before{transform:scaleX(1)}
+.stepper .sn{transform:scale(.6);opacity:0;transition:transform .5s cubic-bezier(.3,1.6,.5,1),opacity .4s}
+.stepper.in .sn{transform:none;opacity:1}
+.stepper.in li:nth-child(2) .sn{transition-delay:.4s}.stepper.in li:nth-child(3) .sn{transition-delay:.8s}
+@media(max-width:800px){.stepper::before{transform:scaleY(0);transform-origin:top}.stepper.in::before{transform:scaleY(1)}}
+/* areas strip */
+.marquee{overflow:hidden;background:var(--maroon-deep);color:#f3dfe3;padding:16px 0;margin-top:56px}
+.marquee .track{display:flex;gap:48px;width:max-content;animation:scroll-x 34s linear infinite;font-weight:800;font-size:20px}
+.marquee .track span::after{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:48px;vertical-align:middle}
+.marquee:hover .track{animation-play-state:paused}
+@keyframes scroll-x{to{transform:translateX(-50%)}}
+.how{padding-top:72px}
+/* hover feedback */
+.btn{transition:transform .15s,box-shadow .15s,background .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.18)}
+.agent,.area,.guide{transition:transform .2s,box-shadow .2s}
+.agent:hover,.guide:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(28,26,31,.14)}
+@media(prefers-reduced-motion:reduce){.reveal,.stepper::before,.stepper .sn{opacity:1!important;transform:none!important}.marquee .track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}.caret{animation:none}.home-hero .wrap>*{animation:none}}

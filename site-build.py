@@ -31,13 +31,13 @@ def head(title,desc,path):
 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul id="menu">
 <li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
-<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li><li><a href="services.html">Our services</a></li></ul></li>
+<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">What's my home worth?</a></li><li><a href="how-it-works.html">How it works</a></li><li><a href="services.html">Our services</a></li></ul></li>
 <li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
 <li><a href="areas.html">Areas</a></li>
 <li><a href="guides.html">Guides</a></li>
 <li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
 </ul>
-<div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Free appraisal</a></div>
+<div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Find my agent</a></div>
 </div>
 </header>
 <main id="main">
@@ -57,7 +57,7 @@ FOOT='''</main>
 <div class="legal">© <span data-year>2026</span> QLD Agent Finder · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Use</a><br>Photos via <a href="https://unsplash.com">Unsplash</a>. QLD Agent Finder is an agent referral and comparison service, not a licensed real estate agency. Agent order and rankings are not an endorsement; see how rankings work on our <a href="rankings.html#method">rankings page</a>.</div>
 </div>
 </footer>
-<a class="btn btn-gold sticky-cta" href="sell.html">Get my free appraisal</a>
+<a class="btn btn-gold sticky-cta" href="sell.html">Find my agent</a>
 <script src="config.js"></script>
 <script src="data.js"></script>
 <script src="app.js"></script>
@@ -105,7 +105,7 @@ FAQ_SELL=[("Is QLD Agent Finder really free for sellers?","Yes. It is 100% free 
 ("Do I have to list with an agent you match me with?","No. There is no obligation. Meet the agents, compare them and decide in your own time."),
 ("How are agents ranked?","Each agent gets a score out of 100 based on reviews, sales volume, speed of sale and experience. See the full method on our rankings page."),
 ("Who sees my details?","Only the agents you choose or are matched with. We never sell your information."),
-("Can I just find out what my home is worth?","Yes. Choose “Know my home's value” in the form and a local agent can give you a free appraisal.")]
+("Can I just find out what my home is worth?","Yes. Choose “Know my home's value” in the form and a local agent can give you a free home valuation.")]
 FAQ_AGENT=[("Who can join?","Licensed Queensland real estate agents and property managers with a current registration."),
 ("How much does it cost?","Founding partners get a free profile during our launch. See the pricing section on the For Agents page."),
 ("How are enquiries shared?","Seller enquiries are matched to agents by suburb, property type and performance. You are notified by email and phone."),
@@ -114,7 +114,7 @@ def faq(items):
     return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in items)
 
 # ---------------- HOME ----------------
-page('index.html','QLD Agent Finder | Compare & Find Top Real Estate Agents in Queensland','Compare top-rated local real estate agents in Queensland. See agent rankings, fees and results, list your home, and get a free appraisal. Free for sellers.',f'''
+page('index.html','QLD Agent Finder | Compare & Find Top Real Estate Agents in Queensland','Compare top-rated local real estate agents in Queensland. See agent rankings, fees and results, list your home, and get matched with a local agent. Free for sellers.',f'''
 <section class="hero photo" style="padding-bottom:120px">
 <svg class="pin" viewBox="0 0 96 104" aria-hidden="true"><path d="M48 0C21.5 0 0 21 0 47c0 33 48 57 48 57s48-24 48-57C96 21 74.5 0 48 0z" fill="#FBF6EF"/></svg>
 <div class="wrap" style="position:relative">
@@ -132,7 +132,7 @@ page('index.html','QLD Agent Finder | Compare & Find Top Real Estate Agents in Q
 </section>
 
 <div class="wrap paths">
-<a class="path" href="sell.html"><b>I'm selling my home</b><span>List your property and get matched with top local agents. Free appraisal.</span><span class="go">List my home →</span></a>
+<a class="path" href="sell.html"><b>I'm selling my home</b><span>List your property and get matched with top local agents. Find my agent.</span><span class="go">List my home →</span></a>
 <a class="path" href="find-agents.html"><b>I want to compare agents</b><span>Search by suburb, see rankings, and compare up to 3 agents side by side.</span><span class="go">Compare agents →</span></a>
 <a class="path" href="join.html"><b>I'm a real estate agent</b><span>Create your profile and get in front of motivated local sellers.</span><span class="go">List myself →</span></a>
 </div>
@@ -143,7 +143,7 @@ page('index.html','QLD Agent Finder | Compare & Find Top Real Estate Agents in Q
 <div class="grid3">
 <div class="tile"><div class="num">1</div><h3>Search your suburb</h3><p>See the agents who are active and successful where you live.</p></div>
 <div class="tile"><div class="num">2</div><h3>Compare &amp; shortlist</h3><p>Check rankings, sales, days on market, reviews and typical fees.</p></div>
-<div class="tile"><div class="num gold">3</div><h3>Get free appraisals</h3><p>Request appraisals from the agents you like. No obligation to list.</p></div>
+<div class="tile"><div class="num gold">3</div><h3>Hear from local agents</h3><p>Request home valuations from the agents you like. No obligation to list.</p></div>
 </div>
 </div>
 </section>
@@ -236,7 +236,7 @@ page('agent.html','Agent Profile | QLD Agent Finder','Real estate agent profile 
 <h2 style="margin-top:40px;font-size:30px">How this agent is scored</h2><p>Scores combine reviews (40%), sales volume (30%), speed of sale (20%) and experience (10%). <a href="rankings.html#method">Full method</a>.</p>
 </div>
 <div class="card" style="position:sticky;top:96px">
-<h3>Request a free appraisal</h3>
+<h3>Contact this agent</h3>
 <form name="agent-enquiry" method="POST" action="thank-you.html" data-netlify="true" netlify-honeypot="hp">
 <input type="hidden" name="form-name" value="agent-enquiry"><p hidden><label>Leave empty <input name="hp"></label></p>
 <input type="hidden" name="agent" id="pAgentField">
@@ -264,7 +264,7 @@ page('rankings.html','Top Real Estate Agent Rankings in Queensland | QLD Agent F
 </div></section>''')
 
 # ---------------- SELL / LIST HOME ----------------
-page('sell.html','List Your Home & Get a Free Appraisal | QLD Agent Finder','List your Queensland property and get matched with top local agents for a free, no-obligation appraisal.',hero('For sellers','List your home. Get matched free.','Tell us about your property and we will connect you with the best local agents. Takes about 1 minute.','List your home')+f'''
+page('sell.html','List Your Home & Find a Local Agent | QLD Agent Finder','List your Queensland property and get matched with top local agents for a free, no-obligation home valuation.',hero('For sellers','List your home. Get matched free.','Tell us about your property and we will connect you with the best local agents. Takes about 1 minute.','List your home')+f'''
 <section><div class="wrap calc" style="align-items:start">
 <div class="card">
 <div class="steps-bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -314,7 +314,7 @@ page('sell.html','List Your Home & Get a Free Appraisal | QLD Agent Finder','Lis
 <h2>What happens next?</h2>
 <div class="tile" style="margin-bottom:14px"><div class="num">1</div><h3>We review your property</h3><p>Our team looks at your suburb, property type and timing.</p></div>
 <div class="tile" style="margin-bottom:14px"><div class="num">2</div><h3>We match top local agents</h3><p>Usually within 1 business day, by phone or email.</p></div>
-<div class="tile"><div class="num gold">3</div><h3>You choose</h3><p>Meet the agents, compare appraisals and fees. No obligation.</p></div>
+<div class="tile"><div class="num gold">3</div><h3>You choose</h3><p>Meet the agents, compare home valuations and fees. No obligation.</p></div>
 <div class="trust" style="color:#1C1A1F"><span>{TICK}Free</span><span>{TICK}No obligation</span><span>{TICK}No spam</span></div>
 </div>
 </div></section>''')
@@ -324,7 +324,7 @@ page('how-it-works.html','How It Works | QLD Agent Finder','How QLD Agent Finder
 <section><div class="wrap" style="max-width:860px">
 <div class="tile" style="margin-bottom:16px"><div class="num">1</div><h3>Search or tell us about your home</h3><p>Search agents by suburb yourself, or fill in our 1-minute form and we will do the matching for you.</p></div>
 <div class="tile" style="margin-bottom:16px"><div class="num">2</div><h3>Compare agents on real results</h3><p>Every agent profile shows a ranking score, reviews, sales in the last 12 months, average days on market, experience and typical fees. Compare up to 3 side by side.</p></div>
-<div class="tile" style="margin-bottom:16px"><div class="num">3</div><h3>Get free appraisals</h3><p>Request appraisals from the agents you like. Ask the right questions using our free checklist.</p></div>
+<div class="tile" style="margin-bottom:16px"><div class="num">3</div><h3>Hear from local agents</h3><p>Request home valuations from the agents you like. Ask the right questions using our free checklist.</p></div>
 <div class="tile"><div class="num gold">4</div><h3>Choose with confidence</h3><p>Pick the agent who fits you best. There is no obligation, and our service is always free for sellers.</p></div>
 <p style="text-align:center;margin-top:32px"><a class="btn btn-maroon" href="sell.html">Get started free</a> <a class="btn btn-ghost" href="find-agents.html">Search agents</a></p>
 </div></section>''')
@@ -357,9 +357,9 @@ page('guides.html','Seller Guides & Tips | QLD Agent Finder','Free guides for Qu
 <article class="tile" id="questions" style="margin-bottom:20px"><div class="eyebrow">Checklist</div><h2 style="font-size:30px">5 questions to ask before you sign with an agent</h2>
 <ol><li>How many homes have you sold in my suburb this year?</li><li>How did you arrive at this price estimate? Can I see comparable sales?</li><li>What is your commission and what exactly is included?</li><li>What is your marketing plan, and what will it cost me?</li><li>Can I speak with some of your recent sellers?</li></ol></article>
 <article class="tile" id="choose" style="margin-bottom:20px"><div class="eyebrow">Guide</div><h2 style="font-size:30px">How to choose the right agent</h2>
-<p><b>Look local.</b> An agent who sells regularly in your suburb knows the buyers and the prices.</p><p><b>Don't just chase the highest appraisal.</b> An inflated price can win the listing but leave your home sitting on the market.</p><p><b>Compare results, not promises.</b> Look at recent sales, average days on market and reviews.</p><p><b>Understand the fees.</b> Ask for commission and marketing costs in writing before you sign.</p><p><a href="find-agents.html">Compare local agents →</a></p></article>
+<p><b>Look local.</b> An agent who sells regularly in your suburb knows the buyers and the prices.</p><p><b>Don't just chase the highest home valuation.</b> An inflated price can win the listing but leave your home sitting on the market.</p><p><b>Compare results, not promises.</b> Look at recent sales, average days on market and reviews.</p><p><b>Understand the fees.</b> Ask for commission and marketing costs in writing before you sign.</p><p><a href="find-agents.html">Compare local agents →</a></p></article>
 <article class="tile" id="prepare"><div class="eyebrow">Guide</div><h2 style="font-size:30px">Getting your home ready to sell</h2>
-<p>Declutter and deep clean. Fix small repairs. Tidy the garden and entry. Think about styling for photos. Gather documents like rates notices and any building approvals, and speak with a conveyancer early.</p><p><a href="sell.html">Get a free appraisal →</a></p></article>
+<p>Declutter and deep clean. Fix small repairs. Tidy the garden and entry. Think about styling for photos. Gather documents like rates notices and any building approvals, and speak with a conveyancer early.</p><p><a href="sell.html">Find my agent →</a></p></article>
 </div></section>''')
 
 # ---------------- FOR AGENTS ----------------
@@ -422,7 +422,7 @@ page('join.html','List Yourself as an Agent | QLD Agent Finder','Create your QLD
 # ---------------- ABOUT ----------------
 page('about.html','About Us | QLD Agent Finder','About QLD Agent Finder, a Queensland real estate agent comparison service.',hero('About us','Helping Queenslanders choose the right agent','Built in Queensland, for Queensland sellers.','About')+'''
 <section><div class="wrap prose">
-<h2>Our mission</h2><p>Selling a home is one of the biggest financial decisions most people make. Yet many sellers choose an agent by chance: a sign on the street, a letterbox flyer, or the highest appraisal. We built QLD Agent Finder so every Queensland seller can compare agents on real results, for free.</p>
+<h2>Our mission</h2><p>Selling a home is one of the biggest financial decisions most people make. Yet many sellers choose an agent by chance: a sign on the street, a letterbox flyer, or the highest home valuation. We built QLD Agent Finder so every Queensland seller can compare agents on real results, for free.</p>
 <h2 id="money">How we make money</h2><p>Our service is always free for sellers. Agents in our network fund QLD Agent Finder. Paying agents never get a higher ranking score, and any sponsored placement is clearly labelled.</p>
 <h2>Our values</h2><p><b>Local.</b> We focus on Queensland only.<br><b>Transparent.</b> We publish how rankings work.<br><b>Seller first.</b> No pressure, no obligation, no spam.</p>
 <p><a class="btn btn-maroon" href="contact.html">Get in touch</a></p>
@@ -452,7 +452,7 @@ page('privacy.html','Privacy Policy | QLD Agent Finder','How QLD Agent Finder ha
 <section><div class="wrap prose">
 <p>QLD Agent Finder ("we", "us") is an agent comparison and referral service for Queensland property owners. We handle personal information in line with the Australian Privacy Principles (APPs) under the <i>Privacy Act 1988</i> (Cth).</p>
 <h3>What we collect</h3><p>Information you give us through our forms: name, phone, email, property address and details, your timeframe and price expectations, and anything you write in notes or messages. For agents, we also collect agency, licence number, contact details, profile information and performance details such as sales and days on market. We also collect basic website usage data (see Cookies and analytics).</p>
-<h3>Why we collect it</h3><p>To match sellers with agents, arrange appraisals, display agent profiles and rankings, respond to enquiries, run and improve our service, and meet our legal obligations. If you are an agent, we also use your details to verify your licence and manage your profile.</p>
+<h3>Why we collect it</h3><p>To match sellers with agents, arrange home valuations, display agent profiles and rankings, respond to enquiries, run and improve our service, and meet our legal obligations. If you are an agent, we also use your details to verify your licence and manage your profile.</p>
 <h3>Who we share it with</h3><p>Seller details are shared only with the agents you choose or are matched with, so they can contact you about your enquiry. We never sell personal information. We use trusted service providers to run the site: Supabase (database), Cloudflare (website hosting), Resend (email delivery), and Google and Meta (analytics and advertising measurement). They may only use your information to provide their service to us.</p>
 <h3>Overseas disclosure</h3><p>Some of these providers store information outside Australia, including in India. Our team also accesses information from outside Australia, including from Pakistan. By submitting a form you agree to this. We take reasonable steps to make sure overseas recipients protect your information, but they may not be bound by the Australian Privacy Principles.</p>
 <h3>Marketing</h3><p>We may contact you about your enquiry and, with your consent, about related services. You can opt out at any time by emailing us.</p>
@@ -463,7 +463,7 @@ page('privacy.html','Privacy Policy | QLD Agent Finder','How QLD Agent Finder ha
 </div></section>''')
 page('terms.html','Terms of Use | QLD Agent Finder','Terms of use for QLD Agent Finder.',hero('Legal','Terms of Use','Last updated: 29 October 2026','Terms')+'''
 <section><div class="wrap prose">
-<h3>Our service</h3><p>QLD Agent Finder is a free comparison and referral service that helps Queensland property owners find real estate agents. We are not a licensed real estate agency and do not sell, lease, appraise or value property. Any appraisal or sale is between you and the agent.</p>
+<h3>Our service</h3><p>QLD Agent Finder is a free comparison and referral service that helps Queensland property owners find real estate agents. We are not a licensed real estate agency and do not sell, lease, appraise or value property. Any home valuation or sale is between you and the agent.</p>
 <h3>Information on this site</h3><p>Agent information, rankings and calculator results are a guide only. Rankings are based on the factors described on our rankings page and are not an endorsement. We aim to keep information accurate but do not guarantee it. Always check details, including licences, directly with the agent and the Queensland licence register. Some profiles may be marked as samples and are for demonstration only.</p>
 <h3>Using the site</h3><p>Use the site lawfully and honestly. Do not submit false, misleading or spam enquiries, copy or scrape our content, or interfere with how the site works. We may block access for misuse.</p>
 <h3>Sellers</h3><p>When you submit a form you agree to be contacted by us and by agents we match you with, and you confirm the details you give are accurate. We cannot guarantee that an agent will contact you or accept your property. Sellers are never obliged to engage any agent introduced through our service.</p>
@@ -490,7 +490,7 @@ page('services.html','Our Services | QLD Agent Finder','Free services for Queens
 <section><div class="wrap"><div class="center"><div class="eyebrow">For home sellers · always free</div><h2>Seller services</h2></div>
 <div class="grid3">
 {svc('1560026301-88340cf16be7','Agent matching','Tell us about your home and we connect you with the best local agents for your suburb and property.','sell.html','Get matched')}
-{svc('1492889971304-ac16ab4a4a5a','Free property appraisal','Find out what your home could sell for, from agents who sell in your street.','sell.html','Book appraisal')}
+{svc('1492889971304-ac16ab4a4a5a','Free home valuation','Find out what your home could sell for, from agents who sell in your street.','sell.html','Book home valuation')}
 {svc('1613667650324-ed09383eb8e5','Agent comparison & rankings','Compare scores, sales, days on market, reviews and fees side by side.','find-agents.html','Compare agents')}
 {svc('1588012886079-baef0ac45fbd','Selling cost estimates','Use our calculators to estimate commission and total selling costs.','tools.html','Open calculators')}
 {svc('1635315891380-f70330a5b41b','Seller guides','Plain-English checklists and guides for selling in Queensland.','guides.html','Read guides')}
@@ -498,8 +498,8 @@ page('services.html','Our Services | QLD Agent Finder','Free services for Queens
 </div></div></section>
 <section class="white"><div class="wrap"><div class="center"><div class="eyebrow">For real estate agents</div><h2>Agent services</h2></div>
 <div class="grid3">
-<div class="tile"><h3>Agent profile</h3><p>Your own profile page with results, suburbs, fees and an appraisal request form.</p></div>
-<div class="tile"><h3>Seller enquiries</h3><p>Receive appraisal requests from homeowners in the suburbs you cover.</p></div>
+<div class="tile"><h3>Agent profile</h3><p>Your own profile page with results, suburbs, fees and a home valuation request form.</p></div>
+<div class="tile"><h3>Seller enquiries</h3><p>Receive home valuation requests from homeowners in the suburbs you cover.</p></div>
 <div class="tile"><h3>Rankings &amp; badges</h3><p>Get ranked on performance, plus Verified and Founding Partner badges.</p></div>
 </div><p style="text-align:center;margin-top:28px"><a class="btn btn-maroon" href="join.html">List myself as an agent</a></p></div></section>""")
 
@@ -519,7 +519,7 @@ for rname,(slug,intro,subs) in REGIONS.items():
         (f"How much do real estate agents charge in {rname}?","Commission varies by agent, property and price, and it is negotiable. Ask each agent for their commission and marketing costs in writing, and use our free commission calculator to compare."),
         (f"Is QLD Agent Finder free for {rname} sellers?","Yes. It is 100% free for home sellers, with no obligation to list with any agent.")]
     img=f'https://images.unsplash.com/photo-{{}}?w=1400&q=55&auto=format&fit=crop'
-    body=f"""<section class="page-hero photo" id="findHero" data-region-img="{rname}"><div class="wrap"><div class="breadcrumb"><a href="index.html">Home</a> › <a href="areas.html">Areas</a> › {rname}</div><div class="eyebrow">{rname}, Queensland</div><h1>Top real estate agents in {rname}</h1><p style="font-size:20px;max-width:680px;opacity:.92;margin:0">Compare local {rname} agents on real results: sales, days on market, reviews and fees. Free for sellers.</p><p style="margin:24px 0 0"><a class="btn btn-gold" href="sell.html?region={rname}">Get a free {rname} appraisal</a></p></div></section>
+    body=f"""<section class="page-hero photo" id="findHero" data-region-img="{rname}"><div class="wrap"><div class="breadcrumb"><a href="index.html">Home</a> › <a href="areas.html">Areas</a> › {rname}</div><div class="eyebrow">{rname}, Queensland</div><h1>Top real estate agents in {rname}</h1><p style="font-size:20px;max-width:680px;opacity:.92;margin:0">Compare local {rname} agents on real results: sales, days on market, reviews and fees. Free for sellers.</p><p style="margin:24px 0 0"><a class="btn btn-gold" href="sell.html?region={rname}">Get a free {rname} home valuation</a></p></div></section>
 <section style="padding-top:40px"><div class="wrap">
 <p style="font-size:19px;max-width:820px">{intro}</p>
 <div class="filters"><div class="field"><label for="fQuery">Suburb, agent or agency</label><input id="fQuery" placeholder="e.g. {subs[0]}"></div><div class="field"><label for="fRegion">Region</label><select id="fRegion" data-default="{rname}"></select></div><div class="field"><label for="fSort">Sort by</label><select id="fSort"><option value="score">Ranking score</option><option value="rating">Highest rated</option><option value="sold">Most sales</option><option value="days">Fastest sales</option></select></div></div>
@@ -527,12 +527,12 @@ for rname,(slug,intro,subs) in REGIONS.items():
 </div></section>
 <section class="white"><div class="wrap"><h2>Suburbs we cover in {rname}</h2><div class="chips" style="justify-content:flex-start">"""+''.join(f'<a href="find-agents.html?q={x.replace(" ","%20")}">{x}</a>' for x in subs)+f"""</div></div></section>
 <section><div class="wrap" style="max-width:820px"><h2>Choosing an agent in {rname}</h2>
-<ol><li><b>Shortlist 3 local agents</b> who sell homes like yours in your suburb.</li><li><b>Compare results,</b> not promises: recent sales, days on market and reviews.</li><li><b>Get free appraisals</b> and ask how each price was worked out.</li><li><b>Compare fees in writing,</b> including marketing costs.</li></ol>
+<ol><li><b>Shortlist 3 local agents</b> who sell homes like yours in your suburb.</li><li><b>Compare results,</b> not promises: recent sales, days on market and reviews.</li><li><b>Hear from local agents</b> and ask how each price was worked out.</li><li><b>Compare fees in writing,</b> including marketing costs.</li></ol>
 <p><a href="guides.html#questions">5 questions to ask before you sign →</a> · <a href="tools.html#commission">Commission calculator →</a></p>
 <h2 style="margin-top:40px">{rname} FAQs</h2>"""+faq(fq)+f"""</div></section>
-<section style="padding-top:0"><div class="wrap"><div class="cta-band"><h2>Selling in {rname}?</h2><p style="font-size:19px;max-width:560px;margin:0 auto 24px">Get matched with top local agents. Free, no obligation.</p><a class="btn btn-gold" href="sell.html?region={rname}">Get my free appraisal</a></div></div></section>
+<section style="padding-top:0"><div class="wrap"><div class="cta-band"><h2>Selling in {rname}?</h2><p style="font-size:19px;max-width:560px;margin:0 auto 24px">Get matched with top local agents. Free, no obligation.</p><a class="btn btn-gold" href="sell.html?region={rname}">Find my agent</a></div></div></section>
 <div class="cmpbar" id="cmpbar"><div class="wrap"><span id="cmpCount">0 selected</span><a class="btn btn-gold" id="cmpGo" href="compare.html">Compare now</a></div></div>"""
-    page(fn,f'Top Real Estate Agents in {rname}, QLD | Compare Free | QLD Agent Finder',f'Compare the best real estate agents in {rname}, Queensland. See rankings, recent sales, days on market, reviews and fees, and get a free appraisal.',body,ld=[faq_ld(fq)],crumb=f'Real estate agents in {rname}')
+    page(fn,f'Top Real Estate Agents in {rname}, QLD | Compare Free | QLD Agent Finder',f'Compare the best real estate agents in {rname}, Queensland. See rankings, recent sales, days on market, reviews and fees, and get matched with a local agent.',body,ld=[faq_ld(fq)],crumb=f'Real estate agents in {rname}')
 
 urls=[f'real-estate-agents-{v[0]}.html' for v in REGIONS.values()]+['','areas.html','services.html','find-agents.html','rankings.html','sell.html','how-it-works.html','tools.html','guides.html','for-agents.html','join.html','about.html','faq.html','contact.html','privacy.html','terms.html']
 TODAY=datetime.date.today().isoformat()
