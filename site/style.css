@@ -396,3 +396,7 @@ a[href$="→"],.tile>a:last-child{display:inline-block;padding:10px 0}
 .agent,.area,.guide{transition:transform .2s,box-shadow .2s}
 .agent:hover,.guide:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(28,26,31,.14)}
 @media(prefers-reduced-motion:reduce){.reveal,.stepper::before,.stepper .sn{opacity:1!important;transform:none!important}.marquee .track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}.caret{animation:none}.home-hero .wrap>*{animation:none}}
+
+/* v8: no stray colour strip above the top bar when the page is pulled/overscrolled */
+html{background:#1b1217;overscroll-behavior-y:none}
+.topbar{position:relative;z-index:51}
