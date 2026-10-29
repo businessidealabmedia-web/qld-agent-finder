@@ -29,14 +29,15 @@ def head(title,desc,path):
 <a class="logo" href="index.html" aria-label="QLD Agent Finder home">{PIN}<span><b>QLD</b> Agent Finder</span></a>
 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul id="menu">
-<li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
-<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">What's my home worth?</a></li><li><a href="how-it-works.html">How it works</a></li><li><a href="services.html">Our services</a></li></ul></li>
-<li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
+<li><a href="find-agents.html">Find an agent</a></li>
+<li><a href="sell.html">Sell my home</a></li>
 <li><a href="areas.html">Areas</a></li>
+<li><a href="tools.html">Calculators</a></li>
 <li><a href="guides.html">Guides</a></li>
-<li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
+<li><a href="for-agents.html">For agents</a></li>
+<li class="m-only"><a class="btn btn-maroon" href="sell.html">Get matched free</a></li>
 </ul>
-<div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Find my agent</a></div>
+<div class="actions"><a class="btn btn-maroon" href="sell.html">Get matched free</a></div>
 </div>
 </header>
 <main id="main">

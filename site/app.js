@@ -160,3 +160,5 @@ $$('[data-portal]').forEach(function(a){a.href=CFG.agentPortalUrl||'#'});
   };
   window.qafReveal();
 })();
+
+(function(){var f=location.pathname.split('/').pop()||'index.html';document.querySelectorAll('#menu a').forEach(function(a){var h=a.getAttribute('href').split('#')[0].split('?')[0];if(h===f||(f.indexOf('real-estate-agents-')===0&&h==='areas.html')||(f==='agent.html'&&h==='find-agents.html')||(f==='rankings.html'&&h==='find-agents.html')||(f==='join.html'&&h==='for-agents.html'))a.setAttribute('aria-current','page')})})();

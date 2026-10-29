@@ -38,14 +38,15 @@
 <a class="logo" href="index.html" aria-label="QLD Agent Finder home"><svg width="34" height="38" viewBox="0 0 96 104" aria-hidden="true"><path d="M48 0C21.5 0 0 21 0 47c0 33 48 57 48 57s48-24 48-57C96 21 74.5 0 48 0z" fill="#7A1F33"/><path d="M24 50 48 30 72 50" fill="none" stroke="#E8A33D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><rect x="34" y="50" width="28" height="22" rx="3" fill="#FBF6EF"/></svg><span><b>QLD</b> Agent Finder</span></a>
 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul id="menu">
-<li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
-<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">What's my home worth?</a></li><li><a href="how-it-works.html">How it works</a></li><li><a href="services.html">Our services</a></li></ul></li>
-<li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
+<li><a href="find-agents.html">Find an agent</a></li>
+<li><a href="sell.html">Sell my home</a></li>
 <li><a href="areas.html">Areas</a></li>
+<li><a href="tools.html">Calculators</a></li>
 <li><a href="guides.html">Guides</a></li>
-<li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
+<li><a href="for-agents.html">For agents</a></li>
+<li class="m-only"><a class="btn btn-maroon" href="sell.html">Get matched free</a></li>
 </ul>
-<div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Find my agent</a></div>
+<div class="actions"><a class="btn btn-maroon" href="sell.html">Get matched free</a></div>
 </div>
 </header>
 <main id="main">
@@ -68,12 +69,12 @@
 <section class="choose"><div class="wrap">
 <h2>What would you like to do?</h2>
 <div class="choose-grid">
-<a class="choice main" href="sell.html"><span class="ct">I'm selling my home</span><span class="cd">Tell us about your property and we'll match you with top local agents. It takes a minute and it's free.</span><span class="btn btn-gold">Find my agent, free</span></a>
-<a class="choice" href="find-agents.html"><span class="ct">I want to compare agents</span><span class="cd">Search by suburb, see rankings and compare up to 3 agents side by side.</span><span class="go">Compare agents</span></a>
-<a class="choice" href="join.html"><span class="ct">I'm a real estate agent</span><span class="cd">Create a free profile and get in front of local sellers.</span><span class="go">Join as an agent</span></a>
+<a class="choice main" href="sell.html"><img src="https://images.unsplash.com/photo-1492889971304-ac16ab4a4a5a?w=700&q=60&auto=format&fit=crop" alt="" width="700" height="400" loading="lazy" onerror="this.remove()"><span class="cb"><span class="ct">I'm selling my home</span><span class="cd">Tell us about your property and we'll match you with top local agents. It takes a minute and it's free.</span><span class="btn btn-gold">Find my agent, free</span></span></a>
+<a class="choice" href="find-agents.html"><img src="https://images.unsplash.com/photo-1564379379256-030cc5dabe9c?w=600&q=60&auto=format&fit=crop" alt="" width="600" height="360" loading="lazy" onerror="this.remove()"><span class="cb"><span class="ct">I want to compare agents</span><span class="cd">Search by suburb, see rankings and compare up to 3 agents side by side.</span><span class="go">Compare agents</span></span></a>
+<a class="choice" href="join.html"><img src="https://images.unsplash.com/photo-1635315891380-f70330a5b41b?w=600&q=60&auto=format&fit=crop" alt="" width="600" height="360" loading="lazy" onerror="this.remove()"><span class="cb"><span class="ct">I'm a real estate agent</span><span class="cd">Create a free profile and get in front of local sellers.</span><span class="go">Join as an agent</span></span></a>
 </div></div></section>
 
-<div class="marquee" aria-label="Areas we cover"><div class="track"><span>Brisbane</span><span>Gold Coast</span><span>Sunshine Coast</span><span>Logan</span><span>Ipswich</span><span>Moreton Bay</span><span>Redlands</span><span>Toowoomba</span><span>Brisbane</span><span>Gold Coast</span><span>Sunshine Coast</span><span>Logan</span><span>Ipswich</span><span>Moreton Bay</span><span>Redlands</span><span>Toowoomba</span></div></div>
+<section id="areas" class="areastrip-sec"><div class="wrap"><h2>Pick your area</h2><p class="sub">Tap a place to see its top local agents.</p></div><div class="areastrip" role="list"><a role="listitem" class="atile" href="real-estate-agents-brisbane.html"><img src="https://images.unsplash.com/photo-1564379379256-030cc5dabe9c?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Brisbane</span></a><a role="listitem" class="atile" href="real-estate-agents-gold-coast.html"><img src="https://images.unsplash.com/photo-1607309843659-f4ad95cf3277?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Gold Coast</span></a><a role="listitem" class="atile" href="real-estate-agents-sunshine-coast.html"><img src="https://images.unsplash.com/photo-1700859347214-095a9dc640d7?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Sunshine Coast</span></a><a role="listitem" class="atile" href="real-estate-agents-logan.html"><img src="https://images.unsplash.com/photo-1560026301-88340cf16be7?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Logan</span></a><a role="listitem" class="atile" href="real-estate-agents-ipswich.html"><img src="https://images.unsplash.com/photo-1588012886079-baef0ac45fbd?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Ipswich</span></a><a role="listitem" class="atile" href="real-estate-agents-moreton-bay.html"><img src="https://images.unsplash.com/photo-1584752242818-b4bd7fb3fe10?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Moreton Bay</span></a><a role="listitem" class="atile" href="real-estate-agents-redlands.html"><img src="https://images.unsplash.com/photo-1613667650324-ed09383eb8e5?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Redlands</span></a><a role="listitem" class="atile" href="real-estate-agents-toowoomba.html"><img src="https://images.unsplash.com/photo-1605450195878-3b5c4e70163c?w=520&q=60&auto=format&fit=crop" alt="" width="260" height="180" loading="lazy" onerror="this.remove()"><span>Toowoomba</span></a></div></section>
 <section id="how" class="how"><div class="wrap">
 <h2>3 simple steps. Zero cost to you.</h2>
 <ol class="stepper">
@@ -97,13 +98,13 @@
 </div></section>
 <section>
 <div class="wrap">
-<div class="center"><h2>Built for Queensland sellers</h2><p>The big portals show you listings. We help you choose the person who sells your home.</p></div>
+<div class="why-split"><img class="why-img" src="https://images.unsplash.com/photo-1635315891380-f70330a5b41b?w=800&q=60&auto=format&fit=crop" alt="" width="800" height="900" loading="lazy" onerror="this.remove()"><div><h2>Built for Queensland sellers</h2><p class="sub">The big portals show you listings. We help you choose the person who sells your home.</p>
 <ul class="why">
 <li><b>Local first</b><span>Matched on suburb knowledge, not just a postcode.</span></li>
 <li><b>Transparent rankings</b><span>Scores based on reviews, sales, speed and experience. The method is published.</span></li>
 <li><b>Always free</b><span>No cost to sellers, ever. Agents fund the service.</span></li>
 <li><b>No spam</b><span>Your details only go to the agents you choose.</span></li>
-</ul>
+</ul></div></div>
 </div>
 </section>
 
@@ -115,13 +116,6 @@
 <a class="guide" href="tools.html#costs"><div class="tag">Calculator</div><h3>Selling costs calculator</h3><p>See what you could walk away with.</p></a>
 <a class="guide" href="guides.html#questions"><div class="tag">Checklist</div><h3>5 questions to ask an agent</h3><p>Know what to ask before you sign.</p></a>
 </div>
-</div>
-</section>
-
-<section id="areas">
-<div class="wrap">
-<div class="center"><h2>Find agents across Queensland</h2></div>
-<div class="areas" id="areaTiles"></div><p style="text-align:center;margin-top:24px"><a class="btn btn-ghost" href="areas.html">All areas</a></p>
 </div>
 </section>
 
