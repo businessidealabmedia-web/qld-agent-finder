@@ -585,3 +585,7 @@ html{scrollbar-color:#b9a99a #f4ece1}
 .hb-new{display:inline-block;background:#7A1F33;color:#fff;font-weight:800;font-size:12px;border-radius:999px;padding:4px 12px}
 .homesband .hempty{grid-column:1/-1}
 .ribbon.feat{background:#E8A33D;color:#3b0d19}
+
+.postways{align-items:stretch}.postways .tile{padding:28px}.postways h2{margin:0 0 12px}
+.poststeps{margin:0 0 18px;padding-left:22px;display:grid;gap:8px;color:#4b4450;line-height:1.5}
+.postways{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}@media(max-width:800px){.postways{grid-template-columns:1fr}}.hb-btns{display:flex;gap:10px;flex-wrap:wrap}
