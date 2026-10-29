@@ -10,7 +10,7 @@ var nice=function(s){return String(s||'').replace(/_/g,' ')};
 
 if(!CFG.supabaseUrl||!CFG.supabaseAnonKey){$('#setupView').hidden=false;return}
 var sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
-var state={tab:'overview',agents:[],leads:[],msgs:[],listings:[]};
+var state={tab:'overview',agents:[],leads:[],msgs:[],listings:[],enqs:[],views:{}};
 
 /* ---------- auth ---------- */
 async function boot(){
@@ -33,23 +33,25 @@ async function loadAll(){
   var m=await sb.from('contacts').select('*').order('created_at',{ascending:false}).limit(500);
   if(a.error||l.error||m.error){toast((a.error||l.error||m.error).message,true)}
   var li=await sb.from('listings').select('*, agents(name,agency,email)').order('updated_at',{ascending:false}).limit(500);
+  var en=await sb.from('listing_enquiries').select('*, listings(title,suburb,agents(name,email))').order('created_at',{ascending:false}).limit(1000);var vw=await sb.from('listing_views').select('*');
+  state.enqs=en.data||[];state.views={};(vw.data||[]).forEach(function(v){state.views[v.listing_id]=v.views});
   state.agents=a.data||[];state.leads=l.data||[];state.msgs=m.data||[];state.listings=li.data||[];
   var pend=state.agents.filter(function(x){return x.status==='pending'}).length,nl=state.leads.filter(function(x){return x.status==='new'}).length,nm=state.msgs.filter(function(x){return x.status==='new'}).length;
-  [['#pPending',pend],['#pLeads',nl],['#pMsgs',nm],['#pListings',state.listings.filter(function(x){return x.status==='pending'}).length]].forEach(function(p){var e=$(p[0]);e.hidden=!p[1];e.textContent=p[1]});
+  [['#pPending',pend],['#pLeads',nl],['#pMsgs',nm],['#pListings',state.listings.filter(function(x){return x.status==='pending'}).length],['#pEnqA',state.enqs.filter(function(x){return x.status==='new'}).length]].forEach(function(p){var e=$(p[0]);e.hidden=!p[1];e.textContent=p[1]});
 }
 function agentName(id){var a=state.agents.find(function(x){return x.id===id});return a?a.name:''}
 function toast(t,bad){var d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:'+(bad?'#A3122B':'#0F6B6B')+';color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:99';document.body.appendChild(d);setTimeout(function(){d.remove()},2800)}
 
 /* ---------- views ---------- */
 $('#tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b)show(b.dataset.tab)});
-function show(t){state.tab=t;$$('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t)});({overview:vOverview,applications:vApps,agents:vAgents,leads:vLeads,listings:vListings,messages:vMsgs})[t]()}
+function show(t){state.tab=t;$$('#tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t)});({overview:vOverview,applications:vApps,agents:vAgents,leads:vLeads,listings:vListings,enquiries:vEnq,messages:vMsgs})[t]()}
 
 function vOverview(){var A=state.agents,L=state.leads;
   var c=function(f){return A.filter(f).length};
   $('#main').innerHTML='<h1>Overview</h1><div class="stats">'+
    [['Agent applications',c(function(x){return x.status==='pending'}),'applications'],['Live agents',c(function(x){return x.status==='approved'}),'agents'],['New leads',L.filter(function(x){return x.status==='new'}).length,'leads'],['Total leads',L.length,'leads'],['New messages',state.msgs.filter(function(x){return x.status==='new'}).length,'messages']]
    .map(function(s){return '<div class="stat" data-go="'+s[2]+'"><b>'+s[1]+'</b>'+s[0]+'</div>'}).join('')+'</div>'+
-   '<h2>Latest leads</h2>'+leadTable(L.slice(0,8))+'<h2 style="margin-top:24px">Latest applications</h2>'+agentTable(A.filter(function(x){return x.status==='pending'}).slice(0,8),true);
+   homeStats()+attention()+'<h2>Latest leads</h2>'+leadTable(L.slice(0,8))+'<h2 style="margin-top:24px">Latest applications</h2>'+agentTable(A.filter(function(x){return x.status==='pending'}).slice(0,8),true);
   $$('[data-go]').forEach(function(d){d.addEventListener('click',function(){show(d.dataset.go)})});bindRows()}
 
 function agentTable(list,isApp){if(!list.length)return '<div class="tbl"><div class="empty">Nothing here yet.</div></div>';
@@ -60,9 +62,9 @@ function vApps(){var list=state.agents.filter(function(x){return x.status==='pen
   $('#main').innerHTML='<h1>Agent applications</h1><p>Check each licence on the <a href="https://www.qld.gov.au/law/laws-regulated-industries-and-accountability/queensland-laws-and-regulations/check-a-licence-association-charity-or-register" target="_blank" rel="noopener">Queensland licence register</a>, then approve.</p>'+agentTable(list,true);bindRows()}
 
 function vAgents(){
-  $('#main').innerHTML='<h1>Agents</h1><div class="bar"><input id="aq" placeholder="Search name, agency, suburb"><select id="as"><option value="">All statuses</option><option>approved</option><option>pending</option><option>hidden</option><option>rejected</option></select><button class="btn gold" id="addAgent">+ Add agent</button></div><div id="alist"></div>';
+  $('#main').innerHTML='<h1>Agents</h1><div class="bar"><input id="aq" placeholder="Search name, agency, suburb"><select id="as"><option value="">All statuses</option><option>approved</option><option>pending</option><option>hidden</option><option>rejected</option></select><button class="btn gold" id="addAgent">+ Add agent</button><button class="btn ghost" id="acsv">Download CSV</button></div><div id="alist"></div>';
   var draw=function(){var q=$('#aq').value.toLowerCase(),s=$('#as').value;$('#alist').innerHTML=agentTable(state.agents.filter(function(a){return (!s||a.status===s)&&(!q||(a.name+' '+a.agency+' '+(a.suburbs||[]).join(' ')+' '+a.email).toLowerCase().indexOf(q)>-1)}));bindRows()};
-  $('#aq').addEventListener('input',draw);$('#as').addEventListener('input',draw);$('#addAgent').addEventListener('click',function(){agentForm({status:'approved',verified:true,suburbs:[],years:0,sold_12m:0,avg_days:30,rating:0,reviews:0})});draw()}
+  $('#aq').addEventListener('input',draw);$('#as').addEventListener('input',draw);$('#acsv').addEventListener('click',function(){csvGen(['created_at','status','name','agency','email','phone','licence','region','verified','featured'],state.agents,'qaf-agents')});$('#addAgent').addEventListener('click',function(){agentForm({status:'approved',verified:true,suburbs:[],years:0,sold_12m:0,avg_days:30,rating:0,reviews:0})});draw()}
 
 function leadTable(list){if(!list.length)return '<div class="tbl"><div class="empty">No leads yet.</div></div>';
   return '<div class="tbl"><table><thead><tr><th>Received</th><th>Seller</th><th>Property</th><th>Goal / timing</th><th>Asked for</th><th>Assigned</th><th>Status</th><th></th></tr></thead><tbody>'+
@@ -82,24 +84,60 @@ function vMsgs(){var M=state.msgs;
 /* ---------- listings (homes for sale) ---------- */
 var thumbOf=function(u){return u?u.replace(/\.(jpe?g|png|webp)$/i,'-t.$1'):''};
 function vListings(){var pend=state.listings.filter(function(x){return x.status==='pending'}).length;
-  $('#main').innerHTML='<h1>Listings</h1><p>Review each listing before it goes public. Check the photos, price wording and that the agent is real.</p><div class="bar"><select id="lst"><option value="pending">Needs review ('+pend+')</option><option value="">All statuses</option><option>live</option><option>sold</option><option>draft</option><option>withdrawn</option><option>rejected</option></select></div><div id="lstlist"></div>';
-  var draw=function(){var st=$('#lst').value,list=state.listings.filter(function(l){return !st||l.status===st});
-    $('#lstlist').innerHTML=list.length?'<div class="tbl"><table><thead><tr><th></th><th>Listing</th><th>Agent</th><th>Price</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>'+list.map(function(l){return '<tr><td>'+(l.photos&&l.photos[0]?'<img src="'+esc(thumbOf(l.photos[0]))+'" alt="" width="72" height="52" style="border-radius:8px;object-fit:cover" onerror="this.onerror=null;this.src=\''+esc(l.photos[0])+'\'">':'')+'</td><td><b>'+esc(l.title)+'</b><br>'+esc(l.suburb)+' · '+esc(l.property_type)+'</td><td>'+esc(l.agents&&l.agents.name)+'<br><span class="small">'+esc(l.agents&&l.agents.agency)+'</span></td><td>'+esc(l.price_display)+'</td><td><span class="tag '+esc(l.status)+'">'+esc(l.status)+'</span></td><td>'+fmt(l.updated_at)+'</td><td><button class="btn sm" data-review="'+l.id+'">Review</button></td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">Nothing here.</div></div>';
+  $('#main').innerHTML='<h1>Listings</h1><p>Review each listing before it goes public. Check the photos, price wording and that the agent is real.</p><div class="bar"><select id="lst"><option value="pending">Needs review ('+pend+')</option><option value="">All statuses</option><option>live</option><option>sold</option><option>draft</option><option>withdrawn</option><option>rejected</option></select><input id="lsq" placeholder="Search title, suburb, agent"><button class="btn teal" id="lbulk">Approve all pending</button><button class="btn ghost" id="lcsv">Download CSV</button></div><div id="lstlist"></div>';
+  var draw=function(){var st=$('#lst').value,q=($('#lsq').value||'').toLowerCase(),list=state.listings.filter(function(l){return (!st||l.status===st)&&(!q||(l.title+' '+l.suburb+' '+(l.agents&&l.agents.name)).toLowerCase().indexOf(q)>-1)});
+    $('#lstlist').innerHTML=list.length?'<div class="tbl"><table><thead><tr><th></th><th>Listing</th><th>Agent</th><th>Price</th><th>Views / enq.</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>'+list.map(function(l){return '<tr><td>'+(l.photos&&l.photos[0]?'<img src="'+esc(thumbOf(l.photos[0]))+'" alt="" width="72" height="52" style="border-radius:8px;object-fit:cover" onerror="this.onerror=null;this.src=\''+esc(l.photos[0])+'\'">':'')+'</td><td><b>'+(l.featured?'★ ':'')+esc(l.title)+'</b><br>'+esc(l.suburb)+' · '+esc(l.property_type)+'</td><td>'+esc(l.agents&&l.agents.name)+'<br><span class="small">'+esc(l.agents&&l.agents.agency)+'</span></td><td>'+esc(l.price_display)+'</td><td>'+(state.views[l.id]||0)+' / '+state.enqs.filter(function(e){return e.listing_id===l.id}).length+'</td><td><span class="tag '+esc(l.status)+'">'+esc(l.status)+'</span></td><td>'+fmt(l.updated_at)+'</td><td><button class="btn sm" data-review="'+l.id+'">Review</button></td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">Nothing here.</div></div>';
     $$('[data-review]').forEach(function(b){b.onclick=function(){reviewListing(state.listings.find(function(x){return x.id===b.dataset.review}))}})};
-  $('#lst').addEventListener('input',draw);draw()}
+  $('#lst').addEventListener('input',draw);$('#lsq').addEventListener('input',draw);
+  $('#lcsv').onclick=function(){csvGen(['created_at','status','title','suburb','region','price_display','property_type','beds','baths','cars','featured'],state.listings,'qaf-listings')};
+  $('#lbulk').onclick=async function(){var ids=state.listings.filter(function(x){return x.status==='pending'}).map(function(x){return x.id});if(!ids.length)return toast('Nothing pending');if(!confirm('Publish '+ids.length+' pending listing(s)? Check them first.'))return;
+    var r=await sb.from('listings').update({status:'live'}).in('id',ids);if(r.error)return toast(r.error.message,true);toast('Published '+ids.length+' ✓');await loadAll();show('listings')};
+  draw()}
 function reviewListing(l){
   var kv=[['Agent',(l.agents&&l.agents.name)+' · '+(l.agents&&l.agents.agency)+' · '+(l.agents&&l.agents.email)],['Price',l.price_display+(l.price_num?' (filter value $'+l.price_num.toLocaleString()+')':'')],['Address',[l.address_line,l.suburb,l.postcode].filter(Boolean).join(', ')+(l.hide_address?' (street hidden publicly)':'')],['Type',[l.property_type,l.beds+' bed',l.baths+' bath',l.cars+' car',l.land_m2&&l.land_m2+' m²'].filter(Boolean).join(' · ')],['Open home',l.open_homes],['Auction',l.auction_at&&fmt(l.auction_at)],['Features',(l.features||[]).join(', ')]];
   open('<h2>'+esc(l.title)+'</h2><p><span class="tag '+esc(l.status)+'">'+esc(l.status)+'</span></p><div class="phgrid">'+(l.photos||[]).map(function(u){return '<a href="'+esc(u)+'" target="_blank" rel="noopener"><img src="'+esc(thumbOf(u))+'" alt="" onerror="this.onerror=null;this.src=\''+esc(u)+'\'"></a>'}).join('')+'</div>'+(l.photos&&l.photos.length?'':'<p class="msg err">No photos uploaded.</p>')+
-   '<div class="kv">'+kv.filter(function(x){return x[1]}).map(function(x){return '<b>'+x[0]+'</b><span>'+esc(x[1])+'</span>'}).join('')+'</div><p style="white-space:pre-line">'+esc(l.description)+'</p>'+
+   '<div class="kv">'+kv.filter(function(x){return x[1]}).map(function(x){return '<b>'+x[0]+'</b><span>'+esc(x[1])+'</span>'}).join('')+'</div><label for="etitle">Headline (you can fix typos)</label><input id="etitle" value="'+esc(l.title)+'"><label for="eprice">Price wording</label><input id="eprice" value="'+esc(l.price_display)+'"><label for="edesc">Description</label><textarea id="edesc" rows="6">'+esc(l.description)+'</textarea><label class="chk"><input type="checkbox" id="efeat"'+(l.featured?' checked':'')+'> Featured (shown first, gold ribbon)</label><p class="small">Views: '+(state.views[l.id]||0)+' · Enquiries: '+state.enqs.filter(function(e){return e.listing_id===l.id}).length+'</p>'+
    '<label for="lnote">Note to agent (shown if you reject)</label><textarea id="lnote" rows="2">'+esc(l.admin_notes)+'</textarea>'+
-   '<div class="row"><button class="btn red" id="ldelx">Delete</button><button class="btn ghost" id="lcl">Close</button>'+(l.status==='live'?'<button class="btn ghost" id="lwd">Take offline</button><button class="btn ghost" id="lsold">Mark sold</button>':'<button class="btn ghost" id="lrej">Reject</button><button class="btn teal" id="lok">Approve &amp; publish</button>')+'</div><p class="msg err" id="lmsg2"></p>');
-  var set=async function(st){var r=await sb.from('listings').update({status:st,admin_notes:$('#lnote').value.trim()||null}).eq('id',l.id);if(r.error){$('#lmsg2').textContent=r.error.message;return}close();toast('Saved ✓');await loadAll();show('listings')};
+   '<div class="row"><button class="btn red" id="ldelx">Delete</button><button class="btn ghost" id="lcl">Close</button>'+(l.status==='live'?'<button class="btn" id="lsave2">Save edits</button>':'')+(l.status==='live'?'<button class="btn ghost" id="lwd">Take offline</button><button class="btn ghost" id="lsold">Mark sold</button>':'<button class="btn ghost" id="lrej">Reject</button><button class="btn teal" id="lok">Approve &amp; publish</button>')+'</div><p class="msg err" id="lmsg2"></p>');
+  var set=async function(st){var r=await sb.from('listings').update({status:st,admin_notes:$('#lnote').value.trim()||null,title:$('#etitle').value.trim()||l.title,price_display:$('#eprice').value.trim()||l.price_display,description:$('#edesc').value.trim()||null,featured:$('#efeat').checked}).eq('id',l.id);if(r.error){$('#lmsg2').textContent=r.error.message;return}close();toast('Saved ✓');await loadAll();show('listings')};
   $('#lcl').onclick=close;
+  if($('#lsave2'))$('#lsave2').onclick=function(){set('live')};
   if($('#lok'))$('#lok').onclick=function(){set('live')};if($('#lrej'))$('#lrej').onclick=function(){if(!$('#lnote').value.trim()){$('#lmsg2').textContent='Add a short reason for the agent.';return}set('rejected')};
   if($('#lwd'))$('#lwd').onclick=function(){set('withdrawn')};if($('#lsold'))$('#lsold').onclick=function(){set('sold')};
   $('#ldelx').onclick=async function(){if(!confirm('Delete this listing permanently?'))return;var r=await sb.from('listings').delete().eq('id',l.id);if(r.error)return toast(r.error.message,true);close();toast('Deleted');await loadAll();show('listings')}}
 
+/* ---------- overview extras ---------- */
+function homeStats(){var Ls=state.listings,E=state.enqs,wk=Date.now()-7*864e5;
+  var items=[['Live homes',Ls.filter(function(x){return x.status==='live'}).length,'listings'],['Homes to review',Ls.filter(function(x){return x.status==='pending'}).length,'listings'],['New buyer enquiries',E.filter(function(x){return x.status==='new'}).length,'enquiries'],['Enquiries this week',E.filter(function(x){return new Date(x.created_at)>wk}).length,'enquiries'],['Total home views',Object.keys(state.views).reduce(function(t,k){return t+state.views[k]},0),'listings']];
+  return '<h2>Homes for sale</h2><div class="stats">'+items.map(function(s){return '<div class="stat" data-go="'+s[2]+'"><b>'+s[1]+'</b>'+s[0]+'</div>'}).join('')+'</div>'}
+function attention(){var out=[],day=864e5,now=Date.now();
+  var oldLeads=state.leads.filter(function(l){return l.status==='new'&&now-new Date(l.created_at)>day}).length;
+  var unassigned=state.leads.filter(function(l){return !l.assigned_agent&&['new','contacted'].indexOf(l.status)>-1}).length;
+  var oldEnq=state.enqs.filter(function(e){return e.status==='new'&&now-new Date(e.created_at)>2*day}).length;
+  var noPhoto=state.agents.filter(function(a){return a.status==='approved'&&!a.photo_url}).length;
+  var oldPend=state.listings.filter(function(l){return l.status==='pending'&&now-new Date(l.updated_at)>day}).length;
+  if(oldLeads)out.push([oldLeads+' seller lead'+(oldLeads>1?'s':'')+' waiting over 24 hours','leads']);
+  if(unassigned)out.push([unassigned+' lead'+(unassigned>1?'s':'')+' not assigned to an agent','leads']);
+  if(oldPend)out.push([oldPend+' listing'+(oldPend>1?'s':'')+' waiting for review over 24 hours','listings']);
+  if(oldEnq)out.push([oldEnq+' buyer enquir'+(oldEnq>1?'ies':'y')+' with no agent follow-up after 2 days','enquiries']);
+  if(noPhoto)out.push([noPhoto+' live agent'+(noPhoto>1?'s have':' has')+' no profile photo','agents']);
+  return '<h2>Needs attention</h2>'+(out.length?'<div class="tbl"><table><tbody>'+out.map(function(o){return '<tr><td>⚠ '+esc(o[0])+'</td><td style="width:90px"><button class="btn sm" data-go="'+o[1]+'">Open</button></td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">All clear. Nothing is waiting.</div></div>')}
+
+/* ---------- buyer enquiries ---------- */
+function vEnq(){var E=state.enqs;
+  $('#main').innerHTML='<h1>Buyer enquiries</h1><p>Messages from buyers to listing agents. Agents get them by email; you see every one here.</p><div class="bar"><input id="eq" placeholder="Search buyer, property, agent"><select id="es"><option value="">All statuses</option><option>new</option><option>contacted</option><option>done</option></select><button class="btn ghost" id="ecsv">Download CSV</button></div><div id="elist"></div>';
+  var cur=function(){var q=$('#eq').value.toLowerCase(),s=$('#es').value;return E.filter(function(e){return (!s||e.status===s)&&(!q||[e.name,e.email,e.message,e.listings&&e.listings.title,e.listings&&e.listings.agents&&e.listings.agents.name].join(' ').toLowerCase().indexOf(q)>-1)})};
+  var draw=function(){var list=cur();$('#elist').innerHTML=list.length?'<div class="tbl"><table><thead><tr><th>Received</th><th>Property</th><th>Agent</th><th>Buyer</th><th>Message</th><th>Status</th><th></th></tr></thead><tbody>'+list.map(function(e){var ag=e.listings&&e.listings.agents;return '<tr><td>'+fmt(e.created_at)+'</td><td>'+esc(e.listings&&e.listings.title)+'<br><span class="small">'+esc(e.listings&&e.listings.suburb)+'</span></td><td>'+esc(ag&&ag.name)+'</td><td><b>'+esc(e.name)+'</b><br><a href="mailto:'+esc(e.email)+'">'+esc(e.email)+'</a><br>'+esc(e.phone)+'</td><td style="max-width:320px;white-space:pre-line">'+esc(e.message)+(e.agent_notes?'<br><i class="small">Agent note: '+esc(e.agent_notes)+'</i>':'')+'</td><td><select data-es="'+e.id+'">'+['new','contacted','done'].map(function(s){return '<option'+(s===e.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></td><td><button class="btn sm red" data-edel="'+e.id+'">Delete</button></td></tr>'}).join('')+'</tbody></table></div>':'<div class="tbl"><div class="empty">No enquiries yet.</div></div>';
+    $$('[data-es]').forEach(function(s){s.onchange=async function(){var r=await sb.from('listing_enquiries').update({status:s.value}).eq('id',s.dataset.es);if(r.error)return toast(r.error.message,true);toast('Saved ✓');await loadAll()}});
+    $$('[data-edel]').forEach(function(b){b.onclick=async function(){if(!confirm('Delete this enquiry permanently?'))return;var r=await sb.from('listing_enquiries').delete().eq('id',b.dataset.edel);if(r.error)return toast(r.error.message,true);toast('Deleted');await loadAll();vEnq()}})};
+  $('#eq').addEventListener('input',draw);$('#es').addEventListener('input',draw);$('#ecsv').onclick=function(){csvGen(['created_at','status','name','email','phone','message'],cur(),'qaf-enquiries')};draw()}
+
+function csvGen(cols,rows,name){var q=function(v){v=v==null?'':Array.isArray(v)?v.join('; '):String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  var txt=[cols.join(',')].concat(rows.map(function(r){return cols.map(function(c){return q(r[c])}).join(',')})).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv'}));a.download=name+'-'+new Date().toISOString().slice(0,10)+'.csv';a.click()}
+
 function bindRows(){
+
   $$('[data-edit-agent]').forEach(function(b){b.onclick=function(){agentForm(state.agents.find(function(a){return a.id===b.dataset.editAgent}))}});
   $$('[data-edit-lead]').forEach(function(b){b.onclick=function(){leadForm(state.leads.find(function(l){return l.id===b.dataset.editLead}))}});
 }

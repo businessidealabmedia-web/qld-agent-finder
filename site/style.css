@@ -570,3 +570,18 @@ html{scrollbar-color:#b9a99a #f4ece1}
 .agentbox{background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 14px 40px rgba(79,18,32,.1)}.agentbox h2{font-size:24px;margin:18px 0 10px}.eok{padding:18px;border-radius:16px;background:#e6f4f1;color:#0b4f4f;margin-top:16px}
 .sharebox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px 16px}.sharebox .sm{min-height:40px;padding:0 14px;font-size:14px}
 #similar{margin-top:20px}#similar h2{margin-bottom:18px}
+
+/* v12: highlight homes + what we do */
+#menu a.hl{position:relative;font-weight:800;color:var(--maroon,#7A1F33)}
+.newtag{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.04em;background:#E8A33D;color:#3b0d19;border-radius:999px;padding:2px 7px;margin-left:6px;vertical-align:2px}
+.whatwedo{padding:56px 0 24px}
+.wwd-head{max-width:760px;margin-bottom:26px}.wwd-head h2{margin:0 0 10px}.wwd-head p{margin:0;color:#4b4450;font-size:18px;line-height:1.6}
+.wwd-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.wwd{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid #eadfd0;border-left:4px solid #E8A33D;border-radius:14px;padding:18px;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
+.wwd:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(79,18,32,.12)}.wwd b{font-family:var(--serif);font-size:20px;color:#4F1220}.wwd span{color:#5E5862;line-height:1.5}
+@media(max-width:900px){.wwd-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wwd-grid{grid-template-columns:1fr}}
+.homesband{padding:56px 0;background:linear-gradient(180deg,#fff4de,#FBF6EF);border-top:3px solid #E8A33D}
+.hb-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:26px}.hb-head h2{margin:6px 0 4px}.hb-head p{margin:0;color:#5E5862}
+.hb-new{display:inline-block;background:#7A1F33;color:#fff;font-weight:800;font-size:12px;border-radius:999px;padding:4px 12px}
+.homesband .hempty{grid-column:1/-1}
+.ribbon.feat{background:#E8A33D;color:#3b0d19}

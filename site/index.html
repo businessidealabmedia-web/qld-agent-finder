@@ -13,7 +13,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap">
-<link rel="stylesheet" href="style.css?v=2610298">
+<link rel="stylesheet" href="style.css?v=2610299">
 <meta property="og:url" content="https://qldagentfinder.com.au/">
 <meta property="og:site_name" content="QLD Agent Finder">
 <meta property="og:locale" content="en_AU">
@@ -39,7 +39,7 @@
 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul id="menu">
 <li><a href="find-agents.html">Find an agent</a></li>
-<li><a href="for-sale.html">Homes for sale</a></li>
+<li><a class="hl" href="for-sale.html">Homes for sale<i class="newtag">New</i></a></li>
 <li><a href="sell.html">Sell my home</a></li>
 <li><a href="areas.html">Areas</a></li>
 <li><a href="guides.html">Guides &amp; tools</a></li>
@@ -62,7 +62,7 @@
 <button class="btn btn-gold" type="submit">Find agents</button>
 </form>
 <div class="quick"><span>Popular areas:</span><a href="real-estate-agents-brisbane.html">Brisbane</a><a href="real-estate-agents-gold-coast.html">Gold Coast</a><a href="real-estate-agents-sunshine-coast.html">Sunshine Coast</a><a href="real-estate-agents-logan.html">Logan</a><a href="areas.html">All areas</a></div>
-<p class="quizlink"><a href="match.html">Not sure who to pick? Take the 1-minute match quiz</a></p>
+<p class="quizlink"><a href="match.html">Not sure who to pick? Take the 1-minute match quiz</a> &nbsp;·&nbsp; <a href="for-sale.html">Browse homes for sale</a></p>
 <ul class="trust2"><li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2.6" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Free for sellers</li><li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2.6" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Ranked on real results</li><li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8A33D" stroke-width="2.6" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>No obligation</li></ul>
 </div>
 </section>
@@ -73,6 +73,15 @@
 <a class="choice main" href="sell.html"><img src="https://images.unsplash.com/photo-1492889971304-ac16ab4a4a5a?w=700&q=60&auto=format&fit=crop" alt="" width="700" height="400" loading="lazy" onerror="this.remove()"><span class="cb"><span class="ct">I'm selling my home</span><span class="cd">Tell us about your property and we'll match you with top local agents. It takes a minute and it's free.</span><span class="btn btn-gold">Find my agent, free</span></span></a>
 <a class="choice" href="find-agents.html"><img src="https://images.unsplash.com/photo-1564379379256-030cc5dabe9c?w=600&q=60&auto=format&fit=crop" alt="" width="600" height="360" loading="lazy" onerror="this.remove()"><span class="cb"><span class="ct">I want to compare agents</span><span class="cd">Search by suburb, see rankings and compare up to 3 agents side by side.</span><span class="go">Compare agents</span></span></a>
 <a class="choice" href="join.html"><img src="https://images.unsplash.com/photo-1635315891380-f70330a5b41b?w=600&q=60&auto=format&fit=crop" alt="" width="600" height="360" loading="lazy" onerror="this.remove()"><span class="cb"><span class="ct">I'm a real estate agent</span><span class="cd">Create a free profile and get in front of local sellers.</span><span class="go">Join as an agent</span></span></a>
+</div></div></section>
+
+<section class="whatwedo" id="what"><div class="wrap">
+<div class="wwd-head"><h2>What QLD Agent Finder does</h2><p>We're an independent Queensland guide. We help you compare local real estate agents, browse homes for sale, and get matched with the right agent. We are not an agency and we don't sell your home. <a href="about.html#money">How we make money</a></p></div>
+<div class="wwd-grid">
+<a class="wwd" href="find-agents.html"><b>Compare agents</b><span>See results, reviews, fees and suburbs side by side, then shortlist the best fit.</span></a>
+<a class="wwd" href="for-sale.html"><b>Browse homes for sale</b><span>Photos, prices and open homes, posted by local agents and checked by us.</span></a>
+<a class="wwd" href="sell.html"><b>Get matched free</b><span>Tell us about your home once. Local agents contact you. No obligation.</span></a>
+<a class="wwd" href="join.html"><b>For agents</b><span>Get a profile, post your listings free and receive buyer and seller enquiries.</span></a>
 </div></div></section>
 
 <section class="facts" aria-label="Why QLD Agent Finder"><div class="wrap"><ul>
@@ -99,7 +108,7 @@
 </div>
 </section>
 
-<section class="white" id="latestHomes" hidden><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:28px"><h2 style="margin:0">Latest homes for sale</h2><a class="btn btn-ghost" href="for-sale.html">See all homes</a></div><div class="grid3" id="latestGrid"></div></div></section>
+<section class="homesband" id="latestHomes"><div class="wrap"><div class="hb-head"><div><span class="hb-new">New</span><h2>Homes for sale in Queensland</h2><p>Listed by local agents. Every listing is checked before it goes live.</p></div><a class="btn btn-gold" href="for-sale.html">See all homes</a></div><div class="grid3" id="latestGrid"><div class="hempty" id="latestEmpty"><b>Listings are opening up.</b><p>Local agents are adding their homes now. Agents can post free.</p><a class="btn btn-ghost" href="join.html">Post a listing free</a></div></div></div></section>
 <section class="white"><div class="wrap split">
 <img src="https://images.unsplash.com/photo-1492889971304-ac16ab4a4a5a?w=900&q=60&auto=format&fit=crop" alt="Two-storey family home" loading="lazy" width="900" height="675">
 <div><h2>Your home deserves the right agent</h2><p>The agent you choose can change your sale price, how long it takes, and how stressful it feels. We help you choose on real local results, not a letterbox flyer.</p><p><a class="btn btn-maroon" href="sell.html">List my home free</a> <a class="btn btn-ghost" href="services.html">Our services</a></p></div>
@@ -153,9 +162,9 @@
 </footer>
 <a class="btn btn-gold sticky-cta" href="sell.html">Find my agent</a>
 <script src="config.js"></script>
-<script src="data.js?v=2610298"></script>
-<script src="app.js?v=2610298"></script>
-<script src="homes.js?v=2610298" defer></script>
-<script src="chat.js?v=2610298" defer></script>
+<script src="data.js?v=2610299"></script>
+<script src="app.js?v=2610299"></script>
+<script src="homes.js?v=2610299" defer></script>
+<script src="chat.js?v=2610299" defer></script>
 </body>
 </html>
