@@ -437,3 +437,10 @@ html{background:#1b1217;overscroll-behavior-y:none}
 @media(max-width:760px){.atile{flex-basis:190px;height:140px}}
 .nav>ul>li.m-only{display:none}
 @media(max-width:860px){.nav>ul>li{display:block;width:100%;padding:0}.nav>ul>li>a{text-align:left}.nav>ul>li.m-only{display:block;padding:16px 24px 20px;border-top:1px solid var(--line)}.nav>ul>li.m-only a{width:100%;text-align:center;border-radius:999px;color:#fff;border-top:0;padding:0 22px;display:flex;justify-content:center}}
+/* v8b: photo page banners */
+.ph{background-size:cover;background-position:center}
+.ph-sell{background-image:linear-gradient(90deg,rgba(79,18,32,.94),rgba(122,31,51,.78)),url("https://images.unsplash.com/photo-1492889971304-ac16ab4a4a5a?w=1600&q=55&auto=format&fit=crop")}
+.ph-join{background-image:linear-gradient(90deg,rgba(79,18,32,.94),rgba(122,31,51,.78)),url("https://images.unsplash.com/photo-1635315891380-f70330a5b41b?w=1600&q=55&auto=format&fit=crop")}
+.ph-find{background-image:linear-gradient(90deg,rgba(79,18,32,.94),rgba(122,31,51,.78)),url("https://images.unsplash.com/photo-1564379379256-030cc5dabe9c?w=1600&q=55&auto=format&fit=crop")}
+.side-photo{width:100%;height:240px;object-fit:cover;border-radius:22px;display:block;margin-bottom:20px;box-shadow:0 12px 32px rgba(79,18,32,.16)}
+.side-photo.wide{height:200px;margin-bottom:24px}
