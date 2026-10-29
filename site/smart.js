@@ -63,4 +63,16 @@ if(pf){var out=$q('#planOut');
   P.push(['After an offer',['Have your conveyancer check the contract before you sign.','Ask about deposit, cooling-off and settlement timing.','Ask your lender what you need to arrange for the loan payout.','Use the <a href="#costs">selling costs calculator</a> to see what you could keep.']]);
   out.innerHTML='<p class="plead"><b>'+lead+'</b></p>'+P.map(function(ph){return '<h3>'+ph[0]+'</h3><ul class="plist">'+ph[1].map(function(i){return '<li><label><input type="checkbox"> <span>'+i+'</span></label></li>'}).join('')+'</ul>'}).join('')+'<p class="small">General guide only, not legal or financial advice. Ask your conveyancer and lender about your situation.</p><p><button type="button" class="btn btn-ghost" onclick="window.print()">Print this plan</button> <a class="btn btn-gold" href="sell.html">Get matched with an agent</a></p>';
   out.hidden=false;out.scrollIntoView({behavior:'smooth',block:'start'})})}
+
+/* ---------------- AI bio writer (join page) ---------------- */
+var bioBox=document.getElementById('jBio');
+if(bioBox){var CFGb=window.QAF_CONFIG||{};
+ var wrap=document.createElement('div');wrap.className='aibio';wrap.innerHTML='<button type="button" class="btn btn-ghost" id="aiBioBtn">Write my bio with AI</button> <span class="small" id="aiBioMsg" role="status"></span>';bioBox.parentNode.appendChild(wrap);
+ var btn=wrap.querySelector('button'),msg=wrap.querySelector('#aiBioMsg');
+ var g=function(id){var el=document.getElementById(id);return el?el.value.trim():''};
+ btn.addEventListener('click',function(){var name=g('jN');if(!name){msg.textContent='Add your name in step 1 first.';return}
+  btn.disabled=true;msg.textContent='Writing\u2026';
+  fetch(CFGb.supabaseUrl+'/functions/v1/qaf-ai',{method:'POST',headers:{'Content-Type':'application/json',apikey:CFGb.supabaseAnonKey},body:JSON.stringify({mode:'bio',name:name,agency:g('jA'),years:g('jY'),region:g('jReg'),suburbs:g('jS'),sold:g('jSold'),days:g('jDays'),notes:bioBox.value})})
+  .then(function(r){if(r.status===503){wrap.hidden=true;return null}return r.ok?r.json():null}).catch(function(){return null})
+  .then(function(j){btn.disabled=false;if(j&&j.text){bioBox.value=j.text;msg.textContent='Done. Please read it and edit anything that is not right.'}else if(!wrap.hidden)msg.textContent='Sorry, that did not work. Please write your own bio.'})})}
 })();

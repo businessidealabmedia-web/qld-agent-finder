@@ -67,6 +67,13 @@ function route(key,label){
  if(key==='agent')return answer("i'm an agent");
  answer(label||key)}
 function norm(q){return String(q).toLowerCase().replace(/[“”"]/g,'').replace(/[?!.,;:]+/g,' ').replace(/\s+/g,' ').trim()}
+var aiOff=!LIVE;
+function askAI(raw){var msgs=hist.filter(function(m){return m.k==='qc-me'||m.k==='qc-bot'}).slice(-5).map(function(m){return {role:m.k==='qc-me'?'user':'assistant',content:m.t}});
+ var t=h('div','qc-m qc-bot qc-typing');t.setAttribute('aria-hidden','true');t.innerHTML='<i></i><i></i><i></i>';log.appendChild(t);scroll();
+ var ctl=window.AbortController?new AbortController():null,to=setTimeout(function(){if(ctl)ctl.abort()},15000);
+ fetch(CFG.supabaseUrl+'/functions/v1/qaf-ai',{method:'POST',headers:{'Content-Type':'application/json',apikey:CFG.supabaseAnonKey},body:JSON.stringify({mode:'chat',messages:msgs}),signal:ctl?ctl.signal:undefined})
+ .then(function(r){clearTimeout(to);if(r.status===503||r.status===403||r.status===404)aiOff=true;return r.ok?r.json():null}).catch(function(){return null})
+ .then(function(j){t.remove();if(j&&j.text){state.fails=0;bot(j.text,null,[['Get matched free','sell']])}else fallback(raw)})}
 function answer(raw){var q=norm(raw);
  for(var i=0;i<SMALL.length;i++){if(SMALL[i].k.test(q)){var sm=SMALL[i];state.fails=0;
    if(sm.menu)return bot(sm.a+' costs, rankings, areas, home value, how it works, joining as an agent.');
@@ -74,8 +81,10 @@ function answer(raw){var q=norm(raw);
    return bot(sm.a)}}
  var best=null,bs=0;KB.forEach(function(e){var m=q.match(new RegExp(e.k.source,'g'));if(m&&m.length>bs){bs=m.length;best=e}});
  if(best){state.fails=0;return bot(best.a,best.l,[['Get matched free','sell']])}
- if(/\b(sell|selling|list|listing|match)\b/.test(q)||/\b(home|house|property)\b/.test(q))return startLead('Sell my home');
- state.fails++;state.lastQ=raw;
+ if(/\b(sell|selling|list|listing|match)\b/.test(q))return startLead('Sell my home');
+ if(!aiOff)return askAI(raw);
+ return fallback(raw)}
+function fallback(raw){state.fails++;state.lastQ=raw;
  if(state.fails===1)return bot('I’m not sure about that one. I can help with selling, finding agents, costs, rankings and areas. Try the buttons below or ask in different words.');
  bot('Sorry, I still can’t answer that. I can pass your question to the team and they’ll reply by email.',null,[['Send my question to the team','msg']])}
 function submit(e){e.preventDefault();var v=input.value.trim();if(!v)return;input.value='';me(v);
