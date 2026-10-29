@@ -352,10 +352,14 @@ a[href$="→"],.tile>a:last-child{display:inline-block;padding:10px 0}
 
 /* ===== v7: plain wording, no mascot, purposeful motion (29 Oct 2026) ===== */
 .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-/* mascot removed from site pages */
-.page-hero::after,.hero.photo::after{display:none!important}
-.page-hero .wrap>*{max-width:none!important}
-.empty-pin img,.agent-band img{display:none}
+/* Pinny: shown only where there is room, never over text */
+.page-hero::after,.hero.photo::after{display:none}
+.home-hero{position:relative}
+@media(min-width:1240px){
+.hero.photo.home-hero::after{display:block;content:"";position:absolute;right:max(24px,calc(50% - 600px));bottom:84px;width:210px;height:278px;background:url(pinny-shades.png) no-repeat right bottom/contain;pointer-events:none;filter:drop-shadow(0 12px 16px rgba(0,0,0,.28))}
+}
+@media(min-width:1100px){.page-hero{position:relative}.page-hero::after{display:block;width:150px;height:200px;right:max(24px,calc(50% - 560px))}}
+.empty-pin img{display:block}
 /* centred hero */
 .center-hero{text-align:center}
 .center-hero h1{max-width:900px;margin:0 auto 20px;font-size:clamp(40px,6vw,76px)}
