@@ -543,3 +543,4 @@ html{scrollbar-color:#b9a99a #f4ece1}
 #planOut h3{margin:20px 0 10px;font-family:var(--serif);font-size:24px;color:var(--maroon)}
 .glance{margin:28px 0 0;padding:24px;border-radius:24px;background:#fff;border:2px solid var(--gold);box-shadow:0 14px 36px rgba(232,163,61,.2)}.glance h2{margin:0 0 12px;font-size:26px}.glance ul{margin:0 0 10px;padding:0;list-style:none;display:grid;gap:8px}.glance li{padding-left:28px;position:relative}.glance li::before{content:"\2605";position:absolute;left:0;color:var(--gold)}
 @media print{header,footer,.qc-launch,.qc-panel,.sticky-cta,.page-hero,.btn{display:none!important}}
+.ph-join::after{background-image:url(pinny-point.png)!important}

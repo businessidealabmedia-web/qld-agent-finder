@@ -15,6 +15,20 @@ var KB=[
 {k:/oblig|have to list|commit|contract|must i|forced|lock/,a:"No obligation. Meet the agents, compare them and decide in your own time.",l:[]},
 {k:/buy|buying|rent|lease|tenant|landlord|property manag|investor|invest/,a:"We focus on helping sellers choose a listing agent. For leasing or property management, tell us in the form and we'll note it.",l:[['Tell us what you need','sell.html']]},
 {k:/licen|verif|real agent|legit|qualified|check/,a:"Agents apply with their QLD licence number and we check it on the register before approving. Approved agents get a Verified badge.",l:[['About us','about.html']]},
+{w:6,k:/auction|private treaty|expression of interest|eoi|how (do|does) (you |a |an )?sell/,a:"Homes in Queensland are usually sold by auction or private treaty (a set price with offers). Which suits you depends on your home and market. A good agent will explain both and why they suggest one.",l:[['Questions to ask an agent','guides.html#questions']]},
+{w:6,k:/choose|pick|select|which agent|right agent|what to ask|questions to ask|interview/,a:"Compare 2 or 3 agents on recent local sales, days to sell, reviews and fees. Ask each how they got to their price and what marketing costs. Our quiz can shortlist for you.",l:[['Take the match quiz','match.html'],['Questions to ask','guides.html#questions']]},
+{w:6,k:/conveyanc|solicitor|lawyer|legal|contract/,a:"A conveyancer or solicitor checks your contract and handles settlement. It's wise to speak to one before you list. I can't give legal advice, so ask them about your situation.",l:[['Selling plan','tools.html#plan']]},
+{w:6,k:/stamp duty|tax|cgt|capital gain|gst|mortgage|loan|bank/,a:"I can't give tax or finance advice. Your accountant and lender can help with that. Our calculator shows agent fees and other selling costs so you can see what you might keep.",l:[['Selling costs calculator','tools.html#costs']]},
+{w:6,k:/open home|inspection|photo|styling|stage|staging|declutter|renovat|repair|paint/,a:"Good presentation helps. Tidy up, fix the obvious things and get strong photos. Ask your agent what is worth doing for your home before you spend money.",l:[['Selling plan','tools.html#plan']]},
+{w:6,k:/best time|when should i sell|spring|season|market (is|now)|property market/,a:"The best time depends on your home and your plans, and it differs by suburb. A local agent can tell you what buyers are doing in your area right now.",l:[['Get matched free','sell.html']]},
+{w:6,k:/without an agent|private sale|sell myself|fsbo|diy/,a:"Some people sell privately, but most use an agent for pricing, marketing and negotiating. Ask a few agents what they would do for you and what it costs, then decide.",l:[['Compare agents','find-agents.html']]},
+{w:6,k:/negotiat|lower (the )?(fee|commission)|discount|cheaper agent/,a:"Commission and marketing costs can often be discussed. Ask each agent for their fee in writing and what is included before you sign.",l:[['Commission calculator','tools.html#commission']]},
+{w:6,k:/multiple agents|more than one agent|two agents|several agents|exclusive|agreement|term of/,a:"Agents usually ask you to sign an agreement for a set period. Read the length, fees and cancellation terms before signing, and ask a conveyancer if unsure.",l:[]},
+{w:6,k:/sold|sale history|recent sales|comparable|comps|neighbour/,a:"Ask each agent to show recent sales near you and how long they took. Our agent profiles show sales in the last 12 months and average days on market.",l:[['Find agents','find-agents.html']]},
+{w:6,k:/how long (does it|to) sell|days on market|time to sell/,a:"It varies by suburb, price and how the home is presented. Agent profiles show their average days on market so you can compare.",l:[['Agent rankings','rankings.html']]},
+{w:6,k:/remove|delete|unsubscribe|stop (contact|calling|emailing)|opt out|my details/,a:"To have your details changed or removed, email contact@qldagentfinder.com.au and we'll sort it out.",l:[['Contact us','contact.html']]},
+{w:6,k:/facebook|instagram|social|follow/,a:"You can find us on Facebook and Instagram as QLD Agent Finder. Links are at the bottom of every page.",l:[]},
+{w:6,k:/who (owns|runs|made|built)|about (you|us)|company|abn/,a:"QLD Agent Finder is a Queensland referral and comparison service, not a real estate agency. Agents pay to be listed. Sellers never pay.",l:[['About us','about.html'],['How we make money','about.html#money']]},
 {k:/compare|side by side|difference/,a:"Tick up to 3 agents on the Find agents page and press Compare to see them side by side.",l:[['Find agents','find-agents.html']]}
 ];
 var SMALL=[
@@ -79,7 +93,7 @@ function answer(raw){var q=norm(raw);
    if(sm.menu)return bot(sm.a+' costs, rankings, areas, home value, how it works, joining as an agent.');
    if(sm.send){state.lastQ='';return bot(sm.a,[['Contact us','contact.html']],[['Send a message to the team','msg']])}
    return bot(sm.a)}}
- var best=null,bs=0;KB.forEach(function(e){var m=q.match(new RegExp(e.k.source,'g'));if(m&&m.length>bs){bs=m.length;best=e}});
+ var best=null,bs=0;KB.forEach(function(e){var m=q.match(new RegExp(e.k.source,'g'));if(!m)return;var sc=m.join('').length+(e.w||0);if(sc>bs){bs=sc;best=e}});
  if(best){state.fails=0;return bot(best.a,best.l,[['Get matched free','sell']])}
  if(/\b(sell|selling|list|listing|match)\b/.test(q))return startLead('Sell my home');
  if(!aiOff)return askAI(raw);
