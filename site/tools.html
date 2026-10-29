@@ -13,7 +13,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap">
-<link rel="stylesheet" href="style.css?v=2610293">
+<link rel="stylesheet" href="style.css?v=2610294">
 <meta property="og:url" content="https://qldagentfinder.com.au/tools">
 <meta property="og:site_name" content="QLD Agent Finder">
 <meta property="og:locale" content="en_AU">
@@ -66,12 +66,21 @@
 <div class="small" style="color:#F5EFE6;margin-top:12px">Total selling costs</div><div style="font-size:26px;font-weight:800" id="scTotal"></div>
 <div class="small" style="color:#F5EFE6;margin-top:12px">Estimated amount after costs</div><div class="big" id="scNet"></div>
 <p class="small" style="color:#e9dfe1">Estimate only, before mortgage payout and tax. Get personal advice.</p></div>
-</div></section></main>
+</div></section><section id="plan" class="white"><div class="wrap" style="max-width:820px">
+<div class="center"><h2>Build your selling plan</h2><p class="sub">Answer 3 questions and get a checklist you can tick off and print.</p></div>
+<form class="card" id="planForm">
+<div class="field"><label for="plWhen">When do you want to sell?</label><select id="plWhen"><option value="asap">As soon as possible</option><option value="soon" selected>In 1 to 3 months</option><option value="later">In 3 to 12 months</option></select></div>
+<div class="field"><label for="plLive">Who is in the property?</label><select id="plLive"><option value="living">I live in it</option><option value="vacant">It is empty</option><option value="tenanted">It has a tenant</option></select></div>
+<div class="field"><label for="plGoal">What matters most?</label><select id="plGoal"><option value="price">Best possible price</option><option value="fast">A fast sale</option><option value="easy">An easy, low-stress sale</option></select></div>
+<button class="btn btn-maroon" type="submit">Build my plan</button>
+<div id="planOut" hidden style="margin-top:24px" aria-live="polite"></div>
+</form></div></section>
+</main>
 <footer>
 <div class="wrap">
 <div class="foot">
 <div><a class="logo" href="index.html" style="color:#F5EFE6"><span><b style="color:#E8A33D">QLD</b> Agent Finder</span></a><p>Find the right agent. Locally.<br>Helping Queensland homeowners compare trusted local real estate agents.</p></div>
-<div><h4>Sellers</h4><ul><li><a href="sell.html">List your home</a></li><li><a href="find-agents.html">Find agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="tools.html">Calculators</a></li><li><a href="guides.html">Guides</a></li></ul></div>
+<div><h4>Sellers</h4><ul><li><a href="sell.html">List your home</a></li><li><a href="find-agents.html">Find agents</a></li><li><a href="match.html">Agent match quiz</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="tools.html">Calculators</a></li><li><a href="guides.html">Guides</a></li></ul></div>
 <div><h4>Top areas</h4><ul><li><a href="real-estate-agents-brisbane.html">Brisbane</a></li><li><a href="real-estate-agents-gold-coast.html">Gold Coast</a></li><li><a href="real-estate-agents-sunshine-coast.html">Sunshine Coast</a></li><li><a href="real-estate-agents-logan.html">Logan</a></li><li><a href="real-estate-agents-ipswich.html">Ipswich</a></li><li><a href="real-estate-agents-moreton-bay.html">Moreton Bay</a></li><li><a href="real-estate-agents-redlands.html">Redlands</a></li><li><a href="real-estate-agents-toowoomba.html">Toowoomba</a></li></ul></div>
 <div><h4>Agents</h4><ul><li><a href="join.html">List yourself</a></li><li><a href="for-agents.html">Why join</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a href="faq.html#agents">Agent FAQ</a></li><li><a data-portal href="#">Agent login</a></li></ul></div>
 <div><h4>Company</h4><ul><li><a href="services.html">Services</a></li><li><a href="areas.html">Areas</a></li><li><a href="about.html">About us</a></li><li><a href="about.html#money">How we make money</a></li><li><a href="faq.html">FAQ</a></li><li><a href="contact.html">Contact</a></li><li><a href="https://www.facebook.com/qldagentfinder.au/" rel="noopener">Facebook</a> · <a href="https://www.instagram.com/qldagentfinder/" rel="noopener">Instagram</a></li></ul></div>
@@ -81,8 +90,9 @@
 </footer>
 <a class="btn btn-gold sticky-cta" href="sell.html">Find my agent</a>
 <script src="config.js"></script>
-<script src="data.js?v=2610293"></script>
-<script src="app.js?v=2610293"></script>
-<script src="chat.js?v=2610293" defer></script>
+<script src="data.js?v=2610294"></script>
+<script src="app.js?v=2610294"></script>
+<script src="smart.js?v=2610294" defer></script>
+<script src="chat.js?v=2610294" defer></script>
 </body>
 </html>

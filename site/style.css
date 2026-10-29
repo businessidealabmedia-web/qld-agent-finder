@@ -526,3 +526,20 @@ footer a{transition:color .15s}footer a:hover{color:var(--gold)}
 /* scrollbar */
 html{scrollbar-color:#b9a99a #f4ece1}
 @media(prefers-reduced-motion:reduce){body{animation:none}.tile:hover,.guide:hover,.btn-gold:hover,.btn-maroon:hover{transform:none}}
+
+/* ===== v10: match quiz, plan, compare summary ===== */
+.qh{font-size:clamp(26px,3.2vw,34px);margin:6px 0 18px}
+.qstep[hidden]{display:none}
+#quiz .choices{grid-template-columns:1fr 1fr}
+@media(max-width:560px){#quiz .choices{grid-template-columns:1fr}}
+.mres-head{margin-bottom:20px}.mres-head h2{margin:0 0 6px}.mres-head p{margin:0;color:#5b5560}.mnote{margin-top:10px!important;padding:12px 16px;border-radius:14px;background:#fff4de;color:#6a4a12!important}
+.mres{background:#fff;border:2px solid var(--line);border-radius:24px;padding:24px;margin-bottom:18px;box-shadow:0 12px 32px rgba(79,18,32,.08)}
+.mres.best{border-color:var(--gold);box-shadow:0 18px 44px rgba(232,163,61,.28)}
+.mres-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.fit{font-size:15px;color:#5b5560}.fit b{font-family:var(--serif);font-size:30px;color:var(--maroon);margin-right:2px}
+.why-list{margin:14px 0 18px;padding:0;list-style:none;display:grid;gap:8px}.why-list li{position:relative;padding-left:30px}.why-list li::before{content:"";position:absolute;left:0;top:3px;width:20px;height:20px;border-radius:50%;background:var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/13px no-repeat}
+.mres .row{display:flex;gap:10px;flex-wrap:wrap}
+.quizlink{text-align:center;margin:14px 0 0}.quizlink a{color:#fff;font-weight:700;text-underline-offset:4px}
+.plead{font-size:19px}.plist{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:10px}.plist label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}.plist input{width:22px;height:22px;margin-top:3px;accent-color:var(--maroon);flex:none}
+#planOut h3{margin:20px 0 10px;font-family:var(--serif);font-size:24px;color:var(--maroon)}
+.glance{margin:28px 0 0;padding:24px;border-radius:24px;background:#fff;border:2px solid var(--gold);box-shadow:0 14px 36px rgba(232,163,61,.2)}.glance h2{margin:0 0 12px;font-size:26px}.glance ul{margin:0 0 10px;padding:0;list-style:none;display:grid;gap:8px}.glance li{padding-left:28px;position:relative}.glance li::before{content:"\2605";position:absolute;left:0;color:var(--gold)}
+@media print{header,footer,.qc-launch,.qc-panel,.sticky-cta,.page-hero,.btn{display:none!important}}

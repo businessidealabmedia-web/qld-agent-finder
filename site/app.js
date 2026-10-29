@@ -59,6 +59,16 @@ function loadAgents(){
   if(!LIVE)return Promise.resolve(window.QAF_AGENTS||[]);
   return api('public_agents?select=*').then(function(r){return r.ok?r.json():[]}).then(function(rows){return rows.map(mapAgent)}).catch(function(){return []})}
 
+
+function glance(list){var L=[],best=function(f,dir,min){var c=list.filter(function(a){return f(a)>(min||0)||(dir<0&&f(a)>0)});if(c.length<1)return null;c.sort(function(x,y){return dir*(f(y)-f(x))});if(c.length>1&&f(c[0])===f(c[1]))return null;return c[0]};
+ var feeN=function(a){var m=String(a.commission||'').match(/\d+(\.\d+)?/);return m?parseFloat(m[0]):0};
+ var r;
+ if(r=best(function(a){return a.sold12m>0?a.avgDays:0},-1))L.push('<b>'+esc(r.name)+'</b> sells fastest, averaging '+r.avgDays+' days.');
+ if(r=best(function(a){return a.sold12m},1))L.push('<b>'+esc(r.name)+'</b> has the most recent sales ('+r.sold12m+' in 12 months).');
+ if(r=best(feeN,-1))L.push('<b>'+esc(r.name)+'</b> lists the lowest commission ('+feeN(r)+'%).');
+ if(r=best(function(a){return a.years},1))L.push('<b>'+esc(r.name)+'</b> has the most experience ('+r.years+' years).');
+ if(r=best(function(a){return a.rating},1))L.push('<b>'+esc(r.name)+'</b> has the highest rating ('+r.rating.toFixed(1)+'★).');
+ return '<div class="glance"><h2>At a glance</h2>'+(L.length?'<ul>'+L.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>':'<p>These agents are too similar, or too new, to pick a clear winner on the numbers yet.</p>')+'<p class="small">Based on the details agents have supplied. Ask each agent for evidence.</p><p><a class="btn btn-gold" href="sell.html">Get matched free</a></p></div>'}
 function stat(v){return v?v:'—'}
 function days(a){return a.sold12m>0&&a.avgDays?a.avgDays:'—'}
 function revTxt(a){return a.reviews?a.reviews+' review'+(a.reviews===1?'':'s'):'No reviews'}
@@ -101,7 +111,7 @@ function renderAgents(AG){
   if(cmp){var ids=(params.get('ids')||'').split(',').filter(Boolean),list=AG.filter(function(a){return ids.indexOf(a.id)>-1});
     if(list.length<2){cmp.innerHTML='<p>Select 2 or 3 agents on the <a href="find-agents.html">Find Agents</a> page to compare them side by side.</p>'}
     else{var rows=[['Agency',function(a){return esc(a.agency)}],['Region',function(a){return esc(a.region)}],['Ranking score',function(a){return qafHasData(a)?'<b>'+qafScore(a)+'/100</b>':'New'}],['Rating',function(a){return a.rating?a.rating.toFixed(1)+'★ ('+a.reviews+')':'New'}],['Sold last 12 months',function(a){return stat(a.sold12m)}],['Average days on market',function(a){return days(a)}],['Experience',function(a){return a.years?a.years+' years':'—'}],['Typical fees',function(a){return esc(a.commission)}],['Specialty',function(a){return esc(a.specialty)}],['Suburbs',function(a){return esc(a.suburbs.join(', '))}],['',function(a){return '<a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Contact agent</a>'}]];
-      cmp.innerHTML='<div class="table-box"><table class="compare"><thead><tr><th scope="col">Compare</th>'+list.map(function(a){return '<th scope="col">'+esc(a.name)+(a.demo?' <small>(demo)</small>':'')+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+list.map(function(a){return '<td>'+r[1](a)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'}}
+      cmp.innerHTML='<div class="table-box"><table class="compare"><thead><tr><th scope="col">Compare</th>'+list.map(function(a){return '<th scope="col">'+esc(a.name)+(a.demo?' <small>(demo)</small>':'')+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+list.map(function(a){return '<td>'+r[1](a)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'+glance(list)}}
 
   var prof=$('#profile');
   if(prof){var a=AG.filter(function(x){return x.id===params.get('id')})[0];
