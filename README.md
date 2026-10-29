@@ -77,7 +77,7 @@ If `config.js` is empty, the main site runs with the 12 **demo** agents in `site
 Once Supabase is connected, only real approved agents show. You can then delete the demo list from `data.js`.
 
 ## Good next steps
-- **Email alerts** for new leads (Supabase Database Webhook → Resend, free tier).
+- **Email alerts** for new leads/applications/messages: run `supabase/email-alerts.sql` in Supabase (add your Resend key + alert email first; never commit the real key).
 - **Custom SMTP** for login emails (Supabase's built-in email is rate-limited: Authentication → Emails → SMTP → use Resend or Zoho).
 - Google Analytics / Meta Pixel in `site/` pages.
 
