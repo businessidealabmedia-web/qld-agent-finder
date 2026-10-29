@@ -4,8 +4,10 @@
 window.QAF_AGENTS = [];
 window.QAF_REGIONS=["Brisbane","Logan","Gold Coast","Sunshine Coast","Ipswich","Moreton Bay","Redlands","Toowoomba"];
 /* Ranking score out of 100: rating 40% · sales volume 30% · speed of sale 20% · experience 10% */
-window.qafScore=function(a){var all=window.QAF_AGENTS,maxS=Math.max.apply(null,all.map(function(x){return x.sold12m})),minD=Math.min.apply(null,all.map(function(x){return x.avgDays}));
-return Math.round(a.rating/5*40+a.sold12m/maxS*30+minD/a.avgDays*20+Math.min(a.years,20)/20*10)};
+window.qafHasData=function(a){return a.rating>0||a.sold12m>0||a.reviews>0};
+window.qafScore=function(a){var all=window.QAF_AGENTS||[],maxS=Math.max(1,Math.max.apply(null,all.map(function(x){return x.sold12m||0}))),ds=all.filter(function(x){return x.sold12m>0&&x.avgDays>0}).map(function(x){return x.avgDays}),minD=ds.length?Math.min.apply(null,ds):30;
+var speed=a.sold12m>0&&a.avgDays>0?minD/a.avgDays*20:0;
+var s=Math.round((a.rating||0)/5*40+(a.sold12m||0)/maxS*30+speed+Math.min(a.years||0,20)/20*10);return isFinite(s)?s:0};
 window.qafInitials=function(n){return n.split(" ").map(function(w){return w[0]}).slice(0,2).join("")};
 /* Photos: Unsplash (free licence). Change any URL to your own photo. */
 window.QAF_IMG=function(id,w){return 'https://images.unsplash.com/photo-'+id+'?w='+(w||800)+'&q=60&auto=format&fit=crop'};

@@ -122,7 +122,7 @@ page('index.html','QLD Agent Finder | Compare & Find Top Real Estate Agents in Q
 <p class="lead" style="margin-bottom:28px">Compare top local agents by results, reviews and fees. Free for sellers, no obligation.</p>
 <form class="search" id="homeSearch" action="find-agents.html" role="search">
 <label for="hsQ" class="sr" style="position:absolute;left:-9999px">Suburb or agent</label>
-<input id="hsQ" name="q" placeholder="Enter your suburb, e.g. Springwood">
+<input id="hsQ" name="q" placeholder="Suburb, e.g. Springwood">
 <select id="hsRegion" name="region" aria-label="Region"></select>
 <button class="btn btn-gold" type="submit">Find agents</button>
 </form>

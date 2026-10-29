@@ -59,13 +59,17 @@ function loadAgents(){
   if(!LIVE)return Promise.resolve(window.QAF_AGENTS||[]);
   return api('public_agents?select=*').then(function(r){return r.ok?r.json():[]}).then(function(rows){return rows.map(mapAgent)}).catch(function(){return []})}
 
-function ranked(list){return list.slice().sort(function(a,b){return qafScore(b)-qafScore(a)})}
+function stat(v){return v?v:'—'}
+function days(a){return a.sold12m>0&&a.avgDays?a.avgDays:'—'}
+function revTxt(a){return a.reviews?a.reviews+' review'+(a.reviews===1?'':'s'):'No reviews yet'}
+function rankBadge(a,r,cls){return qafHasData(a)?'<span class="badge '+(cls||'rank')+'">#'+r+' in '+esc(a.region)+'</span>':'<span class="badge '+(cls||'rank')+'">New on QLD Agent Finder</span>'}
+function ranked(list){return list.slice().sort(function(a,b){return (qafScore(b)-qafScore(a))||((b.featured?1:0)-(a.featured?1:0))||a.name.localeCompare(b.name,undefined,{numeric:true})})}
 function avatar(a,big){return a.photo?'<img class="avatar" src="'+esc(a.photo)+'" alt="'+esc(a.name)+'" style="object-fit:cover'+(big?';width:96px;height:96px':'')+'" loading="lazy">':'<div class="avatar" aria-hidden="true">'+esc(qafInitials(a.name))+'</div>'}
 function card(a,opts){opts=opts||{};var im=QAF_REGION_IMG[a.region];
-  return '<article class="agent">'+(im?'<div class="cover"><img src="'+QAF_IMG(im,600)+'" alt="'+esc(a.region)+'" loading="lazy" width="600" height="220"></div>':'')+
+  return '<article class="agent">'+(im?'<div class="cover"><img src="'+QAF_IMG(im,600)+'" alt="'+esc(a.region)+'" loading="lazy" width="600" height="220" onerror="this.parentNode.style.display=\'none\'"></div>':'')+
   '<div class="agent-top">'+avatar(a)+'<div><h3><a href="agent.html?id='+encodeURIComponent(a.id)+'" style="color:inherit;text-decoration:none">'+esc(a.name)+'</a></h3><div class="ag">'+esc(a.agency)+' · '+esc(a.region)+'</div></div></div>'+
-  '<div class="badges">'+(opts.rank?'<span class="badge rank">#'+opts.rank+' in '+esc(a.region)+'</span>':'')+(a.verified?'<span class="badge">✓ Verified</span>':'')+(a.featured?'<span class="badge">★ Featured</span>':'')+(a.demo?'<span class="badge demo">Demo profile</span>':'')+'</div>'+
-  '<div class="kpis"><div><b>'+(a.rating?a.rating.toFixed(1)+'★':'New')+'</b><span>'+a.reviews+' reviews</span></div><div><b>'+a.sold12m+'</b><span>sold (12m)</span></div><div><b>'+a.avgDays+'</b><span>avg days</span></div></div>'+
+  '<div class="badges">'+(opts.rank?rankBadge(a,opts.rank):'')+(a.verified?'<span class="badge">✓ Verified</span>':'')+(a.featured?'<span class="badge">★ Featured</span>':'')+(a.demo?'<span class="badge demo">Demo profile</span>':'')+'</div>'+
+  '<div class="kpis"><div><b>'+(a.rating?a.rating.toFixed(1)+'★':'New')+'</b><span>'+revTxt(a)+'</span></div><div><b>'+stat(a.sold12m)+'</b><span>sold (12m)</span></div><div><b>'+days(a)+'</b><span>avg days</span></div></div>'+
   '<div class="small"><b>Suburbs:</b> '+esc(a.suburbs.join(', '))+'<br><b>Fees:</b> '+esc(a.commission)+'</div>'+
   (opts.compare?'<label class="chk"><input type="checkbox" data-cmp="'+esc(a.id)+'"> Add to compare</label>':'')+
   '<div class="row"><a class="btn btn-ghost" href="agent.html?id='+encodeURIComponent(a.id)+'">View profile</a><a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Free appraisal</a></div></article>'}
@@ -93,18 +97,18 @@ function renderAgents(AG){
   var cmp=$('#compareTable');
   if(cmp){var ids=(params.get('ids')||'').split(',').filter(Boolean),list=AG.filter(function(a){return ids.indexOf(a.id)>-1});
     if(list.length<2){cmp.innerHTML='<p>Select 2 or 3 agents on the <a href="find-agents.html">Find Agents</a> page to compare them side by side.</p>'}
-    else{var rows=[['Agency',function(a){return esc(a.agency)}],['Region',function(a){return esc(a.region)}],['Ranking score',function(a){return '<b>'+qafScore(a)+'/100</b>'}],['Rating',function(a){return (a.rating?a.rating.toFixed(1)+'★':'New')+' ('+a.reviews+')'}],['Sold last 12 months',function(a){return a.sold12m}],['Average days on market',function(a){return a.avgDays}],['Experience',function(a){return a.years+' years'}],['Typical fees',function(a){return esc(a.commission)}],['Specialty',function(a){return esc(a.specialty)}],['Suburbs',function(a){return esc(a.suburbs.join(', '))}],['',function(a){return '<a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Free appraisal</a>'}]];
+    else{var rows=[['Agency',function(a){return esc(a.agency)}],['Region',function(a){return esc(a.region)}],['Ranking score',function(a){return qafHasData(a)?'<b>'+qafScore(a)+'/100</b>':'New'}],['Rating',function(a){return a.rating?a.rating.toFixed(1)+'★ ('+a.reviews+')':'New'}],['Sold last 12 months',function(a){return stat(a.sold12m)}],['Average days on market',function(a){return days(a)}],['Experience',function(a){return a.years?a.years+' years':'—'}],['Typical fees',function(a){return esc(a.commission)}],['Specialty',function(a){return esc(a.specialty)}],['Suburbs',function(a){return esc(a.suburbs.join(', '))}],['',function(a){return '<a class="btn btn-maroon" href="sell.html?agent='+encodeURIComponent(a.name)+'">Free appraisal</a>'}]];
       cmp.innerHTML='<div class="table-box"><table class="compare"><thead><tr><th scope="col">Compare</th>'+list.map(function(a){return '<th scope="col">'+esc(a.name)+(a.demo?' <small>(demo)</small>':'')+'</th>'}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr><td><b>'+r[0]+'</b></td>'+list.map(function(a){return '<td>'+r[1](a)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>'}}
 
   var prof=$('#profile');
   if(prof){var a=AG.filter(function(x){return x.id===params.get('id')})[0];
-    if(!a){prof.innerHTML='<h1>Agent not found</h1><p><a href="find-agents.html" style="color:#fff">Browse all agents</a></p>'}
+    if(!a){prof.innerHTML='<h1>Agent not found</h1><p>This profile may have been removed or the link is wrong.</p><p><a class="btn btn-gold" href="find-agents.html">Browse all agents</a></p>';var bd=prof.closest('section');if(bd&&bd.nextElementSibling)bd.nextElementSibling.hidden=true}
     else{document.title=a.name+' | '+a.agency+' | QLD Agent Finder';
       $('#pName').textContent=a.name;$('#pAgency').textContent=a.agency+' · '+a.region;
       if(a.photo){$('#pInit').outerHTML=avatar(a,true)}else $('#pInit').textContent=qafInitials(a.name);
-      $('#pBadges').innerHTML='<span class="badge rank">#'+regionRank(a)+' in '+esc(a.region)+'</span>'+(a.verified?'<span class="badge">✓ Verified</span>':'')+(a.demo?'<span class="badge demo">Demo profile</span>':'');
-      $('#pKpis').innerHTML='<div><b>'+qafScore(a)+'</b><span>score /100</span></div><div><b>'+(a.rating?a.rating.toFixed(1)+'★':'New')+'</b><span>'+a.reviews+' reviews</span></div><div><b>'+a.sold12m+'</b><span>sold (12m)</span></div><div><b>'+a.avgDays+'</b><span>avg days</span></div><div><b>'+a.years+'</b><span>years</span></div><div><b>'+esc(a.commission)+'</b><span>typical fees</span></div>';
-      $('#pAbout').textContent=a.bio||(a.name+' is a '+a.region+' agent with '+a.years+' years of experience, specialising in '+a.specialty.toLowerCase()+'. Active in '+a.suburbs.join(', ')+'.');
+      $('#pBadges').innerHTML=rankBadge(a,regionRank(a))+(a.verified?'<span class="badge">✓ Verified</span>':'')+(a.demo?'<span class="badge demo">Demo profile</span>':'');
+      $('#pKpis').innerHTML='<div><b>'+(qafHasData(a)?qafScore(a):'New')+'</b><span>'+(qafHasData(a)?'score /100':'no score yet')+'</span></div><div><b>'+(a.rating?a.rating.toFixed(1)+'★':'New')+'</b><span>'+revTxt(a)+'</span></div><div><b>'+stat(a.sold12m)+'</b><span>sold (12m)</span></div><div><b>'+days(a)+'</b><span>avg days</span></div><div><b>'+stat(a.years)+'</b><span>years</span></div><div><b>'+esc(a.commission)+'</b><span>typical fees</span></div>';
+      $('#pAbout').textContent=a.bio||(a.name+' is a '+a.region+' agent'+(a.years?' with '+a.years+' years of experience':'')+', specialising in '+a.specialty.toLowerCase()+'. Active in '+a.suburbs.join(', ')+'.');
       $('#pSuburbs').innerHTML=a.suburbs.map(function(s){return '<a href="find-agents.html?q='+encodeURIComponent(s)+'">'+esc(s)+'</a>'}).join('');
       var f=$('#pAgentField');if(f)f.value=a.name+' ('+a.agency+')';
       if(a.demo)$('#pDemo').hidden=false;}}
@@ -113,7 +117,7 @@ function renderAgents(AG){
   if(rk){var tabs=$('#rankTabs'),cur=params.get('region')||'';
     tabs.innerHTML=['All Queensland'].concat(QAF_REGIONS).map(function(r,i){var v=i?r:'';return '<button type="button" data-r="'+v+'" class="'+(v===cur?'on':'')+'">'+r+'</button>'}).join('');
     var drawR=function(){var list=ranked(AG.filter(function(a){return !cur||a.region===cur}));
-      rk.innerHTML=list.length?list.map(function(a,i){return '<a class="rank-row" href="agent.html?id='+encodeURIComponent(a.id)+'"><div class="rank-no">#'+(i+1)+'</div><div><b>'+esc(a.name)+'</b>'+(a.demo?' <span class="badge demo">Demo</span>':'')+'<div class="small">'+esc(a.agency)+' · '+esc(a.region)+' · '+(a.rating?a.rating.toFixed(1)+'★':'New')+' · '+a.sold12m+' sold · '+a.avgDays+' avg days</div></div><div class="score">'+qafScore(a)+'<small>/100</small></div></a>'}).join(''):'<p>No ranked agents in this area yet.</p>'};
+      rk.innerHTML=list.length?list.map(function(a,i){return '<a class="rank-row" href="agent.html?id='+encodeURIComponent(a.id)+'"><div class="rank-no">'+(qafHasData(a)?'#'+(i+1):'—')+'</div><div><b>'+esc(a.name)+'</b>'+(a.demo?' <span class="badge demo">Demo</span>':'')+'<div class="small">'+esc(a.agency)+' · '+esc(a.region)+' · '+(a.rating?a.rating.toFixed(1)+'★':'New')+(a.sold12m>0?' · '+a.sold12m+' sold · '+a.avgDays+' avg days':' · profile just added')+'</div></div><div class="score">'+(qafHasData(a)?qafScore(a)+'<small>/100</small>':'<small>New</small>')+'</div></a>'}).join(''):'<p>No ranked agents in this area yet.</p>'};
     tabs.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;cur=b.dataset.r;$$('button',tabs).forEach(function(x){x.classList.toggle('on',x===b)});drawR()});drawR()}
 
   var at=$('#areaTiles');if(at){at.innerHTML=QAF_REGIONS.map(function(r){var n=AG.filter(function(a){return a.region===r}).length;return '<a class="area" href="real-estate-agents-'+r.toLowerCase().replace(/ /g,'-')+'.html"><img src="'+QAF_IMG(QAF_REGION_IMG[r],600)+'" alt="'+r+', Queensland" loading="lazy" width="600" height="450"><span>'+r+'<small>'+(n?n+' agent'+(n===1?'':'s')+' · ':'')+'View agents →</small></span></a>'}).join('')}
