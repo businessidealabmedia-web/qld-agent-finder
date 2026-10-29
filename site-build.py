@@ -1,3 +1,4 @@
+# NOTE 29 Oct 2026: index.html and find-agents.html were redesigned by hand. Do NOT regenerate those two from this script (it would overwrite the redesign).
 import os
 D=os.path.join(os.path.dirname(os.path.abspath(__file__)),'site')
 PIN='<svg width="34" height="38" viewBox="0 0 96 104" aria-hidden="true"><path d="M48 0C21.5 0 0 21 0 47c0 33 48 57 48 57s48-24 48-57C96 21 74.5 0 48 0z" fill="#7A1F33"/><path d="M24 50 48 30 72 50" fill="none" stroke="#E8A33D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><rect x="34" y="50" width="28" height="22" rx="3" fill="#FBF6EF"/></svg>'
@@ -30,10 +31,9 @@ def head(title,desc,path):
 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul id="menu">
 <li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
-<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li></ul></li>
+<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li><li><a href="services.html">Our services</a></li></ul></li>
 <li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
 <li><a href="areas.html">Areas</a></li>
-<li><a href="services.html">Services</a></li>
 <li><a href="guides.html">Guides</a></li>
 <li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
 </ul>

@@ -37,10 +37,9 @@
 <button class="menu-btn" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu(this)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1C1A1F" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
 <ul id="menu">
 <li class="dd"><a href="find-agents.html">Find agents</a><ul><li><a href="find-agents.html">Search local agents</a></li><li><a href="rankings.html">Agent rankings</a></li><li><a href="find-agents.html#compare">Compare agents</a></li><li><a href="areas.html">Browse by area</a></li></ul></li>
-<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li></ul></li>
+<li class="dd"><a href="sell.html">Sellers</a><ul><li><a href="sell.html">List / sell your home</a></li><li><a href="sell.html?goal=appraisal">Free appraisal</a></li><li><a href="how-it-works.html">How it works</a></li><li><a href="services.html">Our services</a></li></ul></li>
 <li class="dd"><a href="tools.html">Tools</a><ul><li><a href="tools.html#commission">Commission calculator</a></li><li><a href="tools.html#costs">Selling costs calculator</a></li></ul></li>
 <li><a href="areas.html">Areas</a></li>
-<li><a href="services.html">Services</a></li>
 <li><a href="guides.html">Guides</a></li>
 <li class="dd"><a href="for-agents.html">For agents</a><ul><li><a href="for-agents.html">Why join</a></li><li><a href="join.html">List yourself as an agent</a></li><li><a href="for-agents.html#pricing">Pricing</a></li><li><a data-portal href="#">Agent login</a></li></ul></li>
 </ul>
@@ -48,17 +47,18 @@
 </div>
 </header>
 <main id="main">
-<section class="page-hero" id="findHero"><div class="wrap"><div class="breadcrumb"><a href="index.html">Home</a> › Find agents</div><div class="eyebrow">Find agents</div><h1 id="findTitle">Find &amp; compare local agents</h1><p style="font-size:20px;max-width:680px;opacity:.92;margin:0">Search by suburb, sort by what matters to you, and compare up to 3 agents side by side.</p></div></section>
-<section style="padding-top:40px" id="compare">
+<section class="page-hero" id="findHero"><div class="wrap"><div class="breadcrumb"><a href="index.html">Home</a> › Find agents</div><h1 id="findTitle">Find your local agent</h1><p style="font-size:20px;max-width:620px;opacity:.92;margin:0">Pick your area, then compare agents on results, reviews and fees.</p></div></section>
+<section id="compare" class="find-body">
 <div class="wrap">
-<div class="filters">
-<div class="field"><label for="fQuery">Suburb, agent or agency</label><input id="fQuery" placeholder="e.g. Springwood"></div>
-<div class="field"><label for="fRegion">Region</label><select id="fRegion"></select></div>
+<div class="filters lift">
+<div class="field grow"><label for="fQuery">Search suburb, agent or agency</label><input id="fQuery" placeholder="e.g. Springwood" autocomplete="off"></div>
+<div class="field" style="display:none"><label for="fRegion">Region</label><select id="fRegion"></select></div>
 <div class="field"><label for="fSort">Sort by</label><select id="fSort"><option value="score">Ranking score</option><option value="rating">Highest rated</option><option value="sold">Most sales</option><option value="days">Fastest sales</option></select></div>
 </div>
-<p class="small" id="fCount" aria-live="polite"></p>
+<div class="region-chips" id="regionChips" role="group" aria-label="Filter by region"></div>
+<div class="count-row"><p class="small" id="fCount" aria-live="polite"></p><a class="matchlink" href="sell.html">Not sure? Get matched free</a></div>
 <div class="grid3" id="directory"></div>
-<div class="tile" style="margin-top:32px;text-align:center"><h3>Can't decide? Let us match you.</h3><p>Tell us about your property and we'll suggest the best local agents for you.</p><a class="btn btn-maroon" href="sell.html">Get matched free</a></div>
+<div class="matchband"><div><h3>Can't decide?</h3><p>Tell us about your property and we'll pick the best local agents for you. Free, no obligation.</p></div><a class="btn btn-gold" href="sell.html">Get matched free</a></div>
 </div>
 </section>
 <div class="cmpbar" id="cmpbar"><div class="wrap"><span id="cmpCount">0 selected</span><a class="btn btn-gold" id="cmpGo" href="compare.html">Compare now</a></div></div></main>

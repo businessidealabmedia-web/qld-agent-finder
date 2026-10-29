@@ -61,7 +61,7 @@ function loadAgents(){
 
 function stat(v){return v?v:'—'}
 function days(a){return a.sold12m>0&&a.avgDays?a.avgDays:'—'}
-function revTxt(a){return a.reviews?a.reviews+' review'+(a.reviews===1?'':'s'):'No reviews yet'}
+function revTxt(a){return a.reviews?a.reviews+' review'+(a.reviews===1?'':'s'):'No reviews'}
 function rankBadge(a,r,cls){return qafHasData(a)?'<span class="badge '+(cls||'rank')+'">#'+r+' in '+esc(a.region)+'</span>':'<span class="badge '+(cls||'rank')+'">New on QLD Agent Finder</span>'}
 function ranked(list){return list.slice().sort(function(a,b){return (qafScore(b)-qafScore(a))||((b.featured?1:0)-(a.featured?1:0))||a.name.localeCompare(b.name,undefined,{numeric:true})})}
 function avatar(a,big){return a.photo?'<img class="avatar" src="'+esc(a.photo)+'" alt="'+esc(a.name)+'" style="object-fit:cover'+(big?';width:96px;height:96px':'')+'" loading="lazy">':'<div class="avatar" aria-hidden="true">'+esc(qafInitials(a.name))+'</div>'}
@@ -92,6 +92,9 @@ function renderAgents(AG){
       cnt.textContent=list.length+' agent'+(list.length===1?'':'s')+' found';
       dir.innerHTML=list.length?list.map(function(a){return card(a,{rank:regionRank(a),compare:true})}).join(''):empty;
       $$('[data-cmp]',dir).forEach(function(c){c.checked=sel.indexOf(c.dataset.cmp)>-1;c.addEventListener('change',function(){if(c.checked){if(sel.length>=3){c.checked=false;alert('You can compare up to 3 agents.');return}sel.push(c.dataset.cmp)}else sel=sel.filter(function(x){return x!==c.dataset.cmp});bar()})})};
+    var chips=$('#regionChips');
+    if(chips){chips.innerHTML=['All Queensland'].concat(QAF_REGIONS).map(function(r,i){var v=i?r:'';return '<button type="button" data-r="'+v+'" aria-pressed="'+(v===rg.value)+'" class="'+(v===rg.value?'on':'')+'">'+r+'</button>'}).join('');
+      chips.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;rg.value=b.dataset.r;$$('button',chips).forEach(function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});draw()})}
     [q,rg,so].forEach(function(e){e.addEventListener('input',draw)});draw()}
 
   var cmp=$('#compareTable');
