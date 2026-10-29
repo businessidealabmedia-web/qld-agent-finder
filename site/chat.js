@@ -1,4 +1,4 @@
-/* QLD Agent Finder: Pinny guide chat (free, rule-based, no AI service). Saves leads to Supabase source=chatbot */
+/* QLD Agent Finder: Pinny guide chat. Free, rule-based, no AI service. Saves leads to Supabase (source=chatbot) and questions to contacts. */
 (function(){
 var CFG=window.QAF_CONFIG||{},LIVE=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
 var KB=[
@@ -29,77 +29,93 @@ var SMALL=[
 {k:/useless|rubbish|stupid|dumb|hate|terrible|not helpful|bad bot|wrong|doesn't work|doesnt work|broken|rude/,a:"Sorry about that. I'm a simple guide, so I can miss things. A real person can help by email.",send:1},
 {k:/^(lol|haha|hehe|😂|🙂|😊|👍)+$/,a:"😊 Anything else I can help with?"}
 ];
-var CHIPS=[['Sell my home','sell'],['Find an agent','find'],['Is it really free?','free'],['How are agents ranked?','rank'],["I'm an agent",'agent']];
-var el={},log,form,input,state={mode:null,lead:{}},opened=false;
+var QUICK=[['Sell my home','sell'],['Find an agent','find'],['Costs','free'],['Rankings','rank'],["I'm an agent",'agent'],['Areas','areas']];
+var log,input,panel,launch,nudge,state,opened=false,queue=[],busy=false,hist=[];
+function fresh(){state={mode:null,step:null,lead:{},msg:{},fails:0,lastQ:''}}fresh();
 function h(t,c,x){var n=document.createElement(t);if(c)n.className=c;if(x!=null)n.textContent=x;return n}
+function save(){try{sessionStorage.setItem('qcH',JSON.stringify({h:hist.slice(-40),o:opened}))}catch(e){}}
 function scroll(){log.scrollTop=log.scrollHeight}
-function bot(text,links,chips){var m=h('div','qc-m qc-bot',text);if(links&&links.length){var r=h('div','qc-links');links.forEach(function(l){var a=h('a','qc-link',l[0]);a.href=l[1];r.appendChild(a)});m.appendChild(r)}log.appendChild(m);if(chips)addChips(chips);scroll()}
-function me(text){log.appendChild(h('div','qc-m qc-me',text));scroll()}
-function addChips(list){var r=h('div','qc-chips');list.forEach(function(c){var b=h('button','qc-chip',c[0]);b.type='button';b.addEventListener('click',function(){r.remove();me(c[0]);route(c[1],c[0])});r.appendChild(b)});log.appendChild(r);scroll()}
-function menu(){addChips(CHIPS)}
-function ask(prompt,key,ph,type){state.step=key;input.placeholder=ph||'Type here';input.type=type||'text';input.setAttribute('autocomplete',key==='phone'?'tel':key==='name'?'name':key==='email'?'email':'off');bot(prompt);input.focus()}
-function startLead(goal){state.mode='lead';state.lead={goal:goal||'Sell my home'};ask('Great. Which suburb is the property in?','suburb','e.g. Springwood')}
-function sendLead(){var l=state.lead,row={source:'chatbot',goal:l.goal,suburb:l.suburb,name:l.name,phone:l.phone,email:l.email||null,notes:'Via Pinny chat',consent:true};
-bot('Sending…');
-if(!LIVE){done();return}
-fetch(CFG.supabaseUrl+'/rest/v1/leads',{method:'POST',headers:{apikey:CFG.supabaseAnonKey,Authorization:/^eyJ/.test(CFG.supabaseAnonKey)?'Bearer '+CFG.supabaseAnonKey:undefined,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)}).then(function(r){if(r.ok)done();else fail()}).catch(fail)}
-function sendMsg(){var m=state.msg,row={name:m.name,email:m.email,type:'Other (chat)',message:m.message};bot('Sending…');
- var fin=function(){state.mode=null;state.step=null;input.type='text';input.placeholder='Ask a question';bot("Thanks "+m.name+"! The team will reply to "+m.email+" soon.",null,[['Another question','menu']])};
- if(!LIVE){fin();return}
- fetch(CFG.supabaseUrl+'/rest/v1/contacts',{method:'POST',headers:{apikey:CFG.supabaseAnonKey,Authorization:/^eyJ/.test(CFG.supabaseAnonKey)?'Bearer '+CFG.supabaseAnonKey:undefined,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)}).then(function(r){if(r.ok)fin();else fail()}).catch(fail)}
-function done(){state.mode=null;state.step=null;input.type='text';input.placeholder='Ask a question';bot("Thanks "+(state.lead.name||'')+"! A local agent will contact you soon. It's free and there's no obligation.",[],[['Another question','menu']])}
-function fail(){state.mode=null;state.step=null;bot("Sorry, that didn't send. Please use the form instead or email contact@qldagentfinder.com.au.",[['Open the form','sell.html']])}
+function clearChips(){Array.prototype.forEach.call(log.querySelectorAll('.qc-chips'),function(n){n.remove()})}
+function addMsg(kind,text,links,norec){var m=h('div','qc-m '+kind,text);if(links&&links.length){var r=h('div','qc-links');links.forEach(function(l){var a=h('a','qc-link',l[0]);a.href=l[1];r.appendChild(a)});m.appendChild(r)}log.appendChild(m);if(!norec){hist.push({k:kind,t:text,l:links||null});save()}scroll()}
+function addChips(list){clearChips();var r=h('div','qc-chips');list.forEach(function(c){var b=h('button','qc-chip',c[0]);b.type='button';b.addEventListener('click',function(){me(c[0]);route(c[1],c[0])});r.appendChild(b)});log.appendChild(r);scroll()}
+function me(t){clearChips();addMsg('qc-me',t)}
+function bot(text,links,chips){queue.push({text:text,links:links,chips:chips});run()}
+function run(){if(busy||!queue.length)return;busy=true;var it=queue.shift();var t=h('div','qc-m qc-bot qc-typing');t.setAttribute('aria-hidden','true');t.innerHTML='<i></i><i></i><i></i>';log.appendChild(t);scroll();
+ setTimeout(function(){t.remove();addMsg('qc-bot',it.text,it.links);if(it.chips)addChips(it.chips);busy=false;run()},Math.min(800,260+it.text.length*4))}
+function ask(prompt,key,ph,type){state.step=key;input.placeholder=ph||'Type here';input.type=type||'text';input.setAttribute('autocomplete',key==='phone'?'tel':key==='name'||key==='mname'?'name':key==='email'||key==='memail'?'email':'off');bot(prompt);input.focus()}
+function resetInput(){state.mode=null;state.step=null;input.type='text';input.placeholder='Type a question';input.setAttribute('autocomplete','off')}
+function startLead(goal){state.mode='lead';state.lead={goal:goal||'Sell my home'};ask('Great, let’s find your agent. Which suburb is the property in?','suburb','e.g. Springwood')}
+function post(table,row,okFn){if(!LIVE){okFn();return}
+ fetch(CFG.supabaseUrl+'/rest/v1/'+table,{method:'POST',headers:{apikey:CFG.supabaseAnonKey,Authorization:/^eyJ/.test(CFG.supabaseAnonKey)?'Bearer '+CFG.supabaseAnonKey:undefined,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)}).then(function(r){if(r.ok)okFn();else fail()}).catch(fail)}
+function sendLead(){var l=state.lead;bot('Sending…');post('leads',{source:'chatbot',goal:l.goal,suburb:l.suburb,name:l.name,phone:l.phone,email:l.email||null,notes:'Via Pinny chat',consent:true},function(){resetInput();bot('Thanks '+(l.name||'')+'! A local agent will contact you soon. It’s free and there’s no obligation.',null,[['Ask something else','menu']])})}
+function sendMsg(){var m=state.msg;bot('Sending…');post('contacts',{name:m.name,email:m.email,type:'Other (chat)',message:m.message},function(){resetInput();bot('Thanks '+m.name+'! The team will reply to '+m.email+' soon.',null,[['Ask something else','menu']])})}
+function fail(){resetInput();bot('Sorry, that didn’t send. Please use the form instead or email contact@qldagentfinder.com.au.',[['Open the form','sell.html']])}
+function startMsg(){state.mode='msg';state.msg={message:state.lastQ||''};if(state.msg.message)ask('What’s your first name?','mname','Your name');else ask('What would you like to ask the team?','mtext','Type your question')}
+function consent(kind){state.step='consent';bot('By sending, you agree to be contacted '+(kind==='lead'?'by QLD Agent Finder and matched agents.':'by email about your question.'),[['Privacy policy','privacy.html']],[['Agree and send',kind==='lead'?'send':'msgsend'],['Cancel','cancel']])}
 function route(key,label){
+ if(key!=='send'&&key!=='msgsend'&&key!=='cancel'&&state.mode){resetInput()}
  if(key==='msg')return startMsg();
  if(key==='msgsend')return sendMsg();
  if(key==='send')return sendLead();
- if(key==='cancel'){state.mode=null;state.step=null;bot('No problem. Nothing was sent.',null,CHIPS);return}
- if(key==='menu'){bot('What would you like to know?',null,CHIPS);return}
+ if(key==='cancel'){resetInput();return bot('No problem, nothing was sent.')}
+ if(key==='menu')return bot('Ask me about costs, rankings, areas, home value, how it works or joining as an agent. Or tap a button below.');
  if(key==='sell')return startLead('Sell my home');
  if(key==='find')return bot('Pick your area, then compare agents on results, reviews and fees.',[['Find agents','find-agents.html'],['Browse areas','areas.html']],[['Get matched instead','sell']]);
+ if(key==='areas')return answer('areas');
  if(key==='free')return answer('free');
  if(key==='rank')return answer('rank');
  if(key==='agent')return answer("i'm an agent");
  answer(label||key)}
 function norm(q){return String(q).toLowerCase().replace(/[“”"]/g,'').replace(/[?!.,;:]+/g,' ').replace(/\s+/g,' ').trim()}
-function answer(raw){var q=norm(raw);state.fails=state.fails||0;
+function answer(raw){var q=norm(raw);
  for(var i=0;i<SMALL.length;i++){if(SMALL[i].k.test(q)){var sm=SMALL[i];state.fails=0;
-   if(sm.menu)return bot(sm.a,null,CHIPS);
-   if(sm.send){state.lastQ='';return bot(sm.a,[['Contact us','contact.html']],[['Send a message to the team','msg'],['Back to menu','menu']])}
-   if(sm.end)return bot(sm.a);
-   return bot(sm.a,null,CHIPS)}}
+   if(sm.menu)return bot(sm.a+' costs, rankings, areas, home value, how it works, joining as an agent.');
+   if(sm.send){state.lastQ='';return bot(sm.a,[['Contact us','contact.html']],[['Send a message to the team','msg']])}
+   return bot(sm.a)}}
  var best=null,bs=0;KB.forEach(function(e){var m=q.match(new RegExp(e.k.source,'g'));if(m&&m.length>bs){bs=m.length;best=e}});
- if(best){state.fails=0;return bot(best.a,best.l,[['Get matched free','sell'],['More questions','menu']])}
- if(/\b(sell|selling|list|listing|match)\b/.test(q)||/\bhome|house|property\b/.test(q))return startLead('Sell my home');
+ if(best){state.fails=0;return bot(best.a,best.l,[['Get matched free','sell']])}
+ if(/\b(sell|selling|list|listing|match)\b/.test(q)||/\b(home|house|property)\b/.test(q))return startLead('Sell my home');
  state.fails++;state.lastQ=raw;
- if(state.fails===1)return bot("I'm not sure about that one. I can help with selling, finding agents, costs, rankings and areas. Try one of these, or ask in different words.",null,CHIPS);
- bot("Sorry, I still can't answer that. I can pass your question to the team and they'll reply by email.",null,[['Send my question to the team','msg'],['Back to menu','menu']])}
-function startMsg(){state.mode='msg';state.msg={message:state.lastQ||''};if(state.msg.message)ask("What's your first name?",'mname','Your name');else ask("What would you like to ask the team?",'mtext','Type your question')}
+ if(state.fails===1)return bot('I’m not sure about that one. I can help with selling, finding agents, costs, rankings and areas. Try the buttons below or ask in different words.');
+ bot('Sorry, I still can’t answer that. I can pass your question to the team and they’ll reply by email.',null,[['Send my question to the team','msg']])}
 function submit(e){e.preventDefault();var v=input.value.trim();if(!v)return;input.value='';me(v);
  if(state.mode==='msg'){var st=state.step,mm=state.msg;
-  if(st==='mtext'){mm.message=v;return ask("What's your first name?",'mname','Your name')}
+  if(st==='mtext'){mm.message=v;return ask('What’s your first name?','mname','Your name')}
   if(st==='mname'){mm.name=v;return ask('Your email, so the team can reply.','memail','you@example.com','email')}
-  if(st==='memail'){if(!/^\S+@\S+\.\S+$/.test(v)){bot("That doesn't look like an email address. Try again?");return}mm.email=v;state.step='mconsent';var mx=h('div','qc-m qc-bot','By sending, you agree to be contacted by email about your question. ');var pa=h('a','qc-link','Privacy');pa.href='privacy.html';mx.appendChild(pa);log.appendChild(mx);addChips([['Agree and send','msgsend'],['Cancel','cancel']]);return}
+  if(st==='memail'){if(!/^\S+@\S+\.\S+$/.test(v)){bot('That doesn’t look like an email address. Try again?');return}mm.email=v;return consent('msg')}
   return}
  if(state.mode==='lead'){var s=state.step,l=state.lead;
-  if(s==='suburb'){l.suburb=v;return ask("What's your first name?",'name','Your name')}
+  if(s==='suburb'){l.suburb=v;return ask('What’s your first name?','name','Your name')}
   if(s==='name'){l.name=v;return ask('Best mobile number for the agent to reach you?','phone','04xx xxx xxx','tel')}
-  if(s==='phone'){if(v.replace(/\D/g,'').length<8){bot("That doesn't look like a phone number. Try again?");return}l.phone=v;return ask('Email (optional, type "skip" to skip).','email','you@example.com')}
-  if(s==='email'){l.email=/^\S+@\S+\.\S+$/.test(v)?v:'';state.step='consent';var m=h('div','qc-m qc-bot','By sending, you agree to be contacted by QLD Agent Finder and matched agents. ');var a=h('a','qc-link','Privacy');a.href='privacy.html';m.appendChild(a);log.appendChild(m);addChips([['Agree and send','send'],['Cancel','cancel']]);return}
+  if(s==='phone'){if(v.replace(/\D/g,'').length<8){bot('That doesn’t look like a phone number. Try again?');return}l.phone=v;return ask('Email (optional). Type "skip" to skip.','email','you@example.com')}
+  if(s==='email'){l.email=/^\S+@\S+\.\S+$/.test(v)?v:'';return consent('lead')}
   return}
  answer(v)}
+function greet(){var p=location.pathname.split('/').pop();var t='Hi, I’m Pinny, the QLD Agent Finder guide. I’m automated, not a person. What can I help with?';
+ if(/^real-estate-agents-/.test(p))t='Hi, I’m Pinny. Looking for an agent in this area? I can match you with one for free.';
+ else if(p==='tools.html')t='Hi, I’m Pinny. Want help with the calculators or choosing an agent?';
+ bot(t,null,QUICK.slice(0,3))}
+function reset(){queue=[];busy=false;hist=[];log.innerHTML='';fresh();resetInput();save();greet()}
+function open(o){opened=o;panel.hidden=!o;launch.setAttribute('aria-expanded',o);launch.classList.toggle('on',o);if(nudge)nudge.hidden=true;
+ if(o){if(!log.children.length)greet();setTimeout(scroll,0);input.focus()}else launch.focus();save()}
 function build(){
- var b=h('button','qc-launch');b.type='button';b.setAttribute('aria-label','Chat with Pinny');b.setAttribute('aria-expanded','false');
- var i=h('img');i.src='pinny-wave.png';i.alt='';i.width=44;i.height=58;b.appendChild(i);b.appendChild(h('span','qc-lt','Need help?'));
- var p=h('div','qc-panel');p.setAttribute('role','dialog');p.setAttribute('aria-label','Chat with Pinny, automated guide');p.hidden=true;
- var hd=h('div','qc-hd');var av=h('img');av.src='pinny-wave.png';av.alt='';hd.appendChild(av);var t=h('div','qc-ht');t.appendChild(h('b',null,'Pinny'));t.appendChild(h('small',null,'Automated guide. Replies instantly.'));hd.appendChild(t);var x=h('button','qc-x','×');x.type='button';x.setAttribute('aria-label','Close chat');hd.appendChild(x);
- log=h('div','qc-log');log.setAttribute('aria-live','polite');
- form=h('form','qc-form');input=h('input');input.placeholder='Ask a question';input.setAttribute('aria-label','Your message');input.maxLength=200;var sb=h('button','qc-send','Send');sb.type='submit';form.appendChild(input);form.appendChild(sb);
- p.appendChild(hd);p.appendChild(log);p.appendChild(form);document.body.appendChild(b);document.body.appendChild(p);
- function open(o){opened=o;p.hidden=!o;b.setAttribute('aria-expanded',o);b.classList.toggle('on',o);if(o){if(!log.children.length){bot("Hi, I'm Pinny, the QLD Agent Finder guide. I'm automated, not a person. What can I help with?",null,CHIPS)}input.focus()}else b.focus()}
- b.addEventListener('click',function(){open(!opened)});x.addEventListener('click',function(){open(false)});
- p.addEventListener('keydown',function(e){if(e.key==='Escape')open(false)});
- form.addEventListener('submit',submit);
+ launch=h('button','qc-launch');launch.type='button';launch.setAttribute('aria-label','Chat with Pinny');launch.setAttribute('aria-expanded','false');
+ var i=h('img');i.src='pinny-wave.png';i.alt='';i.width=44;i.height=58;launch.appendChild(i);launch.appendChild(h('span','qc-lt','Need help?'));
+ panel=h('div','qc-panel');panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Chat with Pinny, automated guide');panel.hidden=true;
+ var hd=h('div','qc-hd');var av=h('img');av.src='pinny-wave.png';av.alt='';hd.appendChild(av);var t=h('div','qc-ht');t.appendChild(h('b',null,'Pinny'));t.appendChild(h('small',null,'Automated guide · replies instantly'));hd.appendChild(t);
+ var rs=h('button','qc-ic','↻');rs.type='button';rs.title='Start over';rs.setAttribute('aria-label','Start over');hd.appendChild(rs);
+ var x=h('button','qc-ic','×');x.type='button';x.setAttribute('aria-label','Close chat');hd.appendChild(x);
+ log=h('div','qc-log');log.setAttribute('role','log');log.setAttribute('aria-live','polite');
+ var bar=h('div','qc-quick');QUICK.forEach(function(c){var b=h('button','qc-pill',c[0]);b.type='button';b.addEventListener('click',function(){me(c[0]);route(c[1],c[0])});bar.appendChild(b)});
+ var form=h('form','qc-form');input=h('input');input.placeholder='Type a question';input.setAttribute('aria-label','Your message');input.maxLength=200;var sb=h('button','qc-send','Send');sb.type='submit';form.appendChild(input);form.appendChild(sb);
+ panel.appendChild(hd);panel.appendChild(log);panel.appendChild(bar);panel.appendChild(form);document.body.appendChild(launch);document.body.appendChild(panel);
+ launch.addEventListener('click',function(){open(!opened)});x.addEventListener('click',function(){open(false)});rs.addEventListener('click',reset);
+ panel.addEventListener('keydown',function(e){if(e.key==='Escape')open(false)});form.addEventListener('submit',submit);
+ try{var s=JSON.parse(sessionStorage.getItem('qcH')||'null');if(s&&s.h&&s.h.length){hist=s.h;hist.forEach(function(m){addMsg(m.k,m.t,m.l,true)});if(s.o)open(true)}}catch(e){}
+ /* gentle nudge, once per visit, only on browsing pages */
+ var pg=location.pathname.split('/').pop()||'index.html';
+ if(!opened&&!/^(sell|join|contact|thank-you|privacy|terms|404)/.test(pg)){try{if(sessionStorage.getItem('qcN'))return}catch(e){}
+  setTimeout(function(){if(opened)return;nudge=h('div','qc-nudge');var b=h('button','qc-nb','Not sure which agent to pick? Ask Pinny.');b.type='button';b.addEventListener('click',function(){open(true)});var c=h('button','qc-nx','×');c.type='button';c.setAttribute('aria-label','Dismiss');c.addEventListener('click',function(){nudge.hidden=true});nudge.appendChild(b);nudge.appendChild(c);document.body.appendChild(nudge);try{sessionStorage.setItem('qcN','1')}catch(e){}setTimeout(function(){if(nudge)nudge.hidden=true},14000)},12000)}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
 })();
