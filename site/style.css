@@ -589,3 +589,9 @@ html{scrollbar-color:#b9a99a #f4ece1}
 .postways{align-items:stretch}.postways .tile{padding:28px}.postways h2{margin:0 0 12px}
 .poststeps{margin:0 0 18px;padding-left:22px;display:grid;gap:8px;color:#4b4450;line-height:1.5}
 .postways{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}@media(max-width:800px){.postways{grid-template-columns:1fr}}.hb-btns{display:flex;gap:10px;flex-wrap:wrap}
+
+.ogrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}.ogrid .full{grid-column:1/-1}@media(max-width:640px){.ogrid{grid-template-columns:1fr}}
+#ownerForm h3{margin:22px 0 10px}#ownerForm h3:first-child{margin-top:0}
+.ophs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin:0 0 10px}.ophs .ph{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#efe4d6}.ophs img{width:100%;height:100%;object-fit:cover}
+.ophs .cv{position:absolute;left:6px;top:6px;background:#E8A33D;color:#3b0d19;font-size:11px;font-weight:800;border-radius:99px;padding:2px 8px}.ophs button{position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:16px;cursor:pointer}
+.pownerbadge{display:inline-block;background:#fff4de;color:#7A1F33;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:800}
