@@ -162,3 +162,8 @@ $$('[data-portal]').forEach(function(a){a.href=CFG.agentPortalUrl||'#'});
 })();
 
 (function(){var f=location.pathname.split('/').pop()||'index.html';document.querySelectorAll('#menu a').forEach(function(a){var h=a.getAttribute('href').split('#')[0].split('?')[0];if(h===f||(f.indexOf('real-estate-agents-')===0&&h==='areas.html')||(f==='agent.html'&&h==='find-agents.html')||(f==='rankings.html'&&h==='find-agents.html')||(f==='join.html'&&h==='for-agents.html'))a.setAttribute('aria-current','page')})})();
+
+/* premium touches: header shadow on scroll, count-up numbers */
+(function(){var hd=document.querySelector('header');if(hd){var f=function(){hd.classList.toggle('scrolled',window.scrollY>12)};f();window.addEventListener('scroll',f,{passive:true})}
+var nums=document.querySelectorAll('.cnt[data-to]');if(!nums.length||!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;io.unobserve(e.target);var n=e.target,to=+n.dataset.to,t0=performance.now();(function step(t){var p=Math.min(1,(t-t0)/1100);n.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)})(t0)})},{threshold:.6});nums.forEach(function(n){io.observe(n)})})();
