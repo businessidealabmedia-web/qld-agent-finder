@@ -400,3 +400,4 @@ a[href$="→"],.tile>a:last-child{display:inline-block;padding:10px 0}
 /* v8: no stray colour strip above the top bar when the page is pulled/overscrolled */
 html{background:#1b1217;overscroll-behavior-y:none}
 .topbar{position:relative;z-index:51}
+.topbar{display:none}

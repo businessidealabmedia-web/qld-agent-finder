@@ -24,7 +24,6 @@ def head(title,desc,path):
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="topbar"><div class="wrap"><span>Free for Queensland home sellers<span class="hide-sm"> · No obligation</span></span><a href="contact.html">Contact us</a></div></div>
 <header>
 <div class="wrap nav">
 <a class="logo" href="index.html" aria-label="QLD Agent Finder home">{PIN}<span><b>QLD</b> Agent Finder</span></a>
