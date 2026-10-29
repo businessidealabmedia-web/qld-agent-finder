@@ -22,6 +22,7 @@ def head(title,desc,path):
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <div class="topbar"><div class="wrap"><span>Free for Queensland home sellers<span class="hide-sm"> · No obligation</span></span><a href="contact.html">Contact us</a></div></div>
 <header>
 <div class="wrap nav">
@@ -39,7 +40,7 @@ def head(title,desc,path):
 <div class="actions"><a class="btn btn-ghost" href="join.html">I'm an agent</a><a class="btn btn-maroon" href="sell.html">Free appraisal</a></div>
 </div>
 </header>
-<main>
+<main id="main">
 '''
 
 AREA_LINKS=''.join(f'<li><a href="real-estate-agents-{x}.html">{n}</a></li>' for n,x in [('Brisbane','brisbane'),('Gold Coast','gold-coast'),('Sunshine Coast','sunshine-coast'),('Logan','logan'),('Ipswich','ipswich'),('Moreton Bay','moreton-bay'),('Redlands','redlands'),('Toowoomba','toowoomba')])
